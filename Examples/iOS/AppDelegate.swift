@@ -1,6 +1,7 @@
 import AVFoundation
 import HaishinKit
 @preconcurrency import Logboard
+import RTMPHaishinKit
 import SRTHaishinKit
 import UIKit
 

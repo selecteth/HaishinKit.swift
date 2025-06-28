@@ -53,7 +53,7 @@ public struct VideoCodecSettings: Codable, Sendable {
     }
 
     /// The type of the VideoCodec supports format.
-    enum Format: Codable {
+    public enum Format: Codable, Sendable {
         case h264
         case hevc
 
@@ -111,7 +111,7 @@ public struct VideoCodecSettings: Codable, Sendable {
     /// Specifies the video frame interval.
     public var frameInterval: Double = 0.0
 
-    var format: Format = .h264
+    package var format: Format = .h264
 
     /// Creates a new VideoCodecSettings instance.
     public init(

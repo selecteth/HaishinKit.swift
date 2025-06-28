@@ -80,18 +80,4 @@ extension CMVideoFormatDescription {
             return nil
         }
     }
-
-    func makeDecodeConfigurtionRecord() -> (any DecoderConfigurationRecord)? {
-        guard let configurationBox else {
-            return nil
-        }
-        switch mediaSubType {
-        case .h264:
-            return AVCDecoderConfigurationRecord(data: configurationBox)
-        case .hevc:
-            return HEVCDecoderConfigurationRecord(data: configurationBox)
-        default:
-            return nil
-        }
-    }
 }

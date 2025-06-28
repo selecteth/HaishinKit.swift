@@ -118,7 +118,7 @@ public struct AudioCodecSettings: Codable, Sendable {
             }
         }
 
-        func makeSampleRate(_ input: Float64, output: Float64) -> Float64 {
+        package func makeSampleRate(_ input: Float64, output: Float64) -> Float64 {
             let sampleRate = output == 0 ? input : output
             guard let supportedSampleRate else {
                 return sampleRate

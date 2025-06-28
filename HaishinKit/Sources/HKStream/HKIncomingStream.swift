@@ -2,7 +2,7 @@
 import Foundation
 
 /// An actor that provides a stream playback feature.
-public final actor HKIncomingStream {
+package final actor HKIncomingStream {
     public private(set) var isRunning = false
     /// The sound transform value control.
     public var soundTransfrom: SoundTransform? {
@@ -90,14 +90,5 @@ extension HKIncomingStream: AsyncRunner {
         Task { await mediaLink.stopRunning() }
         Task { await audioPlayerNode?.stopRunning() }
         isRunning = false
-    }
-}
-
-extension HKIncomingStream {
-    func append(_ message: RTMPVideoMessage, presentationTimeStamp: CMTime, formatDesciption: CMFormatDescription?) {
-        guard let buffer = message.makeSampleBuffer(presentationTimeStamp, formatDesciption: formatDesciption) else {
-            return
-        }
-        append(buffer)
     }
 }
