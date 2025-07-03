@@ -17,14 +17,17 @@ final class PlaybackViewController: UIViewController {
             pictureInPictureController = AVPictureInPictureController(contentSource: .init(sampleBufferDisplayLayer: layer, playbackDelegate: self))
         }
         Task {
-            session = await SessionBuilderFactory.shared.make(Preference.default.makeURL())?.build()
-            guard let session else {
-                return
+            do {
+                session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+                if let session {
+                    if let view = view as? (any HKStreamOutput) {
+                        await session.stream.addOutput(view)
+                    }
+                    await session.stream.attachAudioPlayer(audioPlayer)
+                }
+            } catch {
+                logger.error(error)
             }
-            if let view = view as? (any HKStreamOutput) {
-                await session.stream.addOutput(view)
-            }
-            await session.stream.attachAudioPlayer(audioPlayer)
         }
     }
 

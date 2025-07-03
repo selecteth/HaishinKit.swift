@@ -54,17 +54,20 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
         // mixer.audioMixerSettings.tracks[1] = .default
         isVideoRotationEnabled = false
         Task {
-            session = await SessionBuilderFactory.shared.make(Preference.default.makeURL())?.build()
-            guard let session else {
-                return
+            do {
+                session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+                // ReplayKit is sensitive to memory, so we limit the queue to a maximum of five items.
+                var videoSetting = await mixer.videoMixerSettings
+                videoSetting.mode = .passthrough
+                await session?.stream.setVideoInputBufferCounts(5)
+                await mixer.setVideoMixerSettings(videoSetting)
+                if let session {
+                    await mixer.addOutput(session.stream)
+                    try? await session.connect(.ingest)
+                }
+            } catch {
+                logger.error(error)
             }
-            // ReplayKit is sensitive to memory, so we limit the queue to a maximum of five items.
-            var videoSetting = await mixer.videoMixerSettings
-            videoSetting.mode = .passthrough
-            await session.stream.setVideoInputBufferCounts(5)
-            await mixer.setVideoMixerSettings(videoSetting)
-            await mixer.addOutput(session.stream)
-            try? await session.connect(.ingest)
         }
         // The volume of the audioApp can be obtained even when muted. A hack to synchronize with the volume.
         DispatchQueue.main.async {

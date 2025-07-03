@@ -1,4 +1,6 @@
 import SwiftUI
+import HaishinKit
+import SRTHaishinKit
 
 struct ContentView: View {
     @ObservedObject var viewModel = ViewModel()
@@ -8,6 +10,10 @@ struct ContentView: View {
     init() {
         viewModel.config()
         lfView = PiPHKSwiftUiView(rtmpStream: $viewModel.stream)
+        Task {
+            await SessionBuilderFactory.shared.register(RTMPSessionFactory())
+            await SessionBuilderFactory.shared.register(SRTSessionFactory())
+        }
     }
 
     var body: some View {

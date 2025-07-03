@@ -32,13 +32,18 @@ final class ViewController: UIViewController {
             var videoMixerSettings = await mixer.videoMixerSettings
             videoMixerSettings.mode = .offscreen
             await mixer.setVideoMixerSettings(videoMixerSettings)
-            session = await SessionBuilderFactory.shared.make(Preference.default.makeURL())?.build()
-            guard let session else {
-                return
-            }
-            await mixer.addOutput(session.stream)
-            if let view = view as? (any HKStreamOutput) {
-                await session.stream.addOutput(view)
+
+            do {
+                session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+                guard let session else {
+                    return
+                }
+                await mixer.addOutput(session.stream)
+                if let view = view as? (any HKStreamOutput) {
+                    await session.stream.addOutput(view)
+                }
+            } catch {
+                logger.error(error)
             }
         }
     }
