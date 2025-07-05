@@ -1,6 +1,6 @@
-import SwiftUI
 import HaishinKit
 import SRTHaishinKit
+import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel = ViewModel()
