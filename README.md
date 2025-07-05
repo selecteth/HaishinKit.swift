@@ -140,6 +140,11 @@ Please make sure to contains `Info.plist` the following values when accessing th
 * [Discontinued support for Carthage.](https://github.com/HaishinKit/HaishinKit.swift/pull/1543)
 
 ## 📓 Settings
+### 🔧 Disable the following debug feature.
+> [!WARN]
+> Some debug features may be incompatible and could cause crashes. Please read the following issue and turn them off.
+> https://github.com/HaishinKit/HaishinKit.swift/issues/1722
+
 ### 🔧 Prerequisites
 Make sure you setup and activate your AVAudioSession iOS.
 ```swift
