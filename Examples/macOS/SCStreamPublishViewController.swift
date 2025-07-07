@@ -27,7 +27,7 @@ class SCStreamPublishViewController: NSViewController {
         super.viewDidLoad()
         urlField.stringValue = Preference.default.uri ?? ""
         Task {
-            session = await SessionBuilderFactory.shared.make(Preference.default.makeURL())?.build()
+            session = try? await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
             guard let session else {
                 return
             }

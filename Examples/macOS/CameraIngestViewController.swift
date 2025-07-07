@@ -33,7 +33,7 @@ final class CameraIngestViewController: NSViewController {
             var videoMixerSettings = await mixer.videoMixerSettings
             videoMixerSettings.mode = .offscreen
             await mixer.setVideoMixerSettings(videoMixerSettings)
-            session = await SessionBuilderFactory.shared.make(Preference.default.makeURL())?.build()
+            session = try? await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
             guard let session else {
                 return
             }
