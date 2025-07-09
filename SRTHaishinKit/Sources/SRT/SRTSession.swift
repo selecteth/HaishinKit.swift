@@ -22,6 +22,9 @@ actor SRTSession: Session {
         self.uri = uri
     }
 
+    func setMaxRetryCount(_ maxRetryCount: Int) {
+    }
+
     func connect(_ method: HaishinKit.SessionMethod) async throws {
         try await connection.connect(uri)
         switch method {

@@ -18,6 +18,8 @@ public protocol Session: Actor {
     /// Creates a new session with uri.
     init(uri: URL)
 
+    func setMaxRetryCount(_ maxRetryCount: Int)
+
     /// Creates a connection to the server.
     func connect(_ method: SessionMethod) async throws
 
