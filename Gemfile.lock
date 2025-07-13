@@ -12,6 +12,7 @@ GEM
       base64
       nkf
       rexml
+    abbrev (0.1.2)
     activesupport (7.2.2.1)
       base64
       benchmark (>= 0.3)
@@ -383,7 +384,6 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin
-  ruby
   x86-linux-gnu
   x86-linux-musl
   x86_64-darwin
@@ -391,6 +391,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  abbrev
   cocoapods
   danger
   danger-privacymanifest!
