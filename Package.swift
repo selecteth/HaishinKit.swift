@@ -24,6 +24,7 @@ let package = Package(
     ],
     products: [
         .library(name: "HaishinKit", targets: ["HaishinKit"]),
+        .library(name: "RTMPHaishinKit", targets: ["RTMPHaishinKit"]),
         .library(name: "SRTHaishinKit", targets: ["SRTHaishinKit"]),
         .library(name: "MoQTHaishinKit", targets: ["MoQTHaishinKit"])
     ],
@@ -41,6 +42,12 @@ let package = Package(
             name: "HaishinKit",
             dependencies: ["Logboard"],
             path: "HaishinKit/Sources",
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "RTMPHaishinKit",
+            dependencies: ["HaishinKit"],
+            path: "RTMPHaishinKit/Sources",
             swiftSettings: swiftSettings
         ),
         .target(
@@ -62,6 +69,12 @@ let package = Package(
             resources: [
                 .process("Asset")
             ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "RTMPHaishinKitTests",
+            dependencies: ["RTMPHaishinKit"],
+            path: "RTMPHaishinKit/Tests",
             swiftSettings: swiftSettings
         ),
         .testTarget(

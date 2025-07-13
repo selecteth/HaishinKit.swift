@@ -28,6 +28,11 @@
 		BCD917072D3A94BC00D30743 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD917062D3A94BC00D30743 /* HaishinKit */; };
 		BCD917092D3A94BC00D30743 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD917082D3A94BC00D30743 /* MoQTHaishinKit */; };
 		BCD9170B2D3A94BC00D30743 /* SRTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD9170A2D3A94BC00D30743 /* SRTHaishinKit */; };
+		BCEC2BBA2E104D8400422F8F /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCEC2BB92E104D8400422F8F /* RTMPHaishinKit */; };
+		BCEC2BBC2E104D8B00422F8F /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCEC2BBB2E104D8B00422F8F /* RTMPHaishinKit */; };
+		BCEC2BBE2E104D9100422F8F /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCEC2BBD2E104D9100422F8F /* RTMPHaishinKit */; };
+		BCEC2BC02E104D9A00422F8F /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCEC2BBF2E104D9A00422F8F /* RTMPHaishinKit */; };
+		BCEC2BC22E104DA200422F8F /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCEC2BC12E104DA200422F8F /* RTMPHaishinKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +228,7 @@
 			files = (
 				BC33A1292CDF526C0016EEA0 /* HaishinKit in Frameworks */,
 				BC33A12B2CDF526C0016EEA0 /* SRTHaishinKit in Frameworks */,
+				BCEC2BC22E104DA200422F8F /* RTMPHaishinKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCD917012D3A94B100D30743 /* HaishinKit in Frameworks */,
+				BCEC2BBA2E104D8400422F8F /* RTMPHaishinKit in Frameworks */,
 				BCD917032D3A94B100D30743 /* MoQTHaishinKit in Frameworks */,
 				BCD917052D3A94B100D30743 /* SRTHaishinKit in Frameworks */,
 			);
@@ -241,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC47FA352CE61FCF002900AE /* MoQTHaishinKit in Frameworks */,
+				BCEC2BBC2E104D8B00422F8F /* RTMPHaishinKit in Frameworks */,
 				BC33A11F2CDF52550016EEA0 /* SRTHaishinKit in Frameworks */,
 				BC33A11D2CDF52550016EEA0 /* HaishinKit in Frameworks */,
 			);
@@ -251,6 +259,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC912DDD2D185D360077EFF3 /* MoQTHaishinKit in Frameworks */,
+				BCEC2BBE2E104D9100422F8F /* RTMPHaishinKit in Frameworks */,
 				BC33A1232CDF525B0016EEA0 /* SRTHaishinKit in Frameworks */,
 				BC33A1212CDF525B0016EEA0 /* HaishinKit in Frameworks */,
 			);
@@ -261,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCD917092D3A94BC00D30743 /* MoQTHaishinKit in Frameworks */,
+				BCEC2BC02E104D9A00422F8F /* RTMPHaishinKit in Frameworks */,
 				BCD917072D3A94BC00D30743 /* HaishinKit in Frameworks */,
 				BCD9170B2D3A94BC00D30743 /* SRTHaishinKit in Frameworks */,
 				BC912A812D12F10C0077EFF3 /* libc++.1.tbd in Frameworks */,
@@ -423,6 +433,7 @@
 				BCD917062D3A94BC00D30743 /* HaishinKit */,
 				BCD917082D3A94BC00D30743 /* MoQTHaishinKit */,
 				BCD9170A2D3A94BC00D30743 /* SRTHaishinKit */,
+				BCEC2BBF2E104D9A00422F8F /* RTMPHaishinKit */,
 			);
 			productName = "Example visionOS";
 			productReference = BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */;
@@ -1390,6 +1401,26 @@
 		BCD9170A2D3A94BC00D30743 /* SRTHaishinKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SRTHaishinKit;
+		};
+		BCEC2BB92E104D8400422F8F /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
+		};
+		BCEC2BBB2E104D8B00422F8F /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
+		};
+		BCEC2BBD2E104D9100422F8F /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
+		};
+		BCEC2BBF2E104D9A00422F8F /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
+		};
+		BCEC2BC12E104DA200422F8F /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

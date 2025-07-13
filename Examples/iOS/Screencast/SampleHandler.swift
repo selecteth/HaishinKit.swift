@@ -2,6 +2,7 @@ import HaishinKit
 @preconcurrency import Logboard
 import MediaPlayer
 import ReplayKit
+import RTMPHaishinKit
 import SRTHaishinKit
 import VideoToolbox
 

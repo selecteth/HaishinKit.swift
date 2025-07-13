@@ -5,7 +5,7 @@ import libsrt
 
 /// An actor that provides the interface to control a SRT connection.
 /// Supports a one-to-one connection. Multiple connections cannot be established.
-public actor SRTConnection: NetworkConnection {
+public actor SRTConnection {
     /// The error domain codes.
     public enum Error: Swift.Error {
         /// An invalid internal stare.

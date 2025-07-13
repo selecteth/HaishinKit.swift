@@ -1,7 +1,7 @@
 import CoreMedia
 import Foundation
 
-enum AVCNALUnitType: UInt8, Equatable {
+package enum AVCNALUnitType: UInt8, Equatable {
     case unspec = 0
     case slice = 1 // P frame
     case dpa = 2
@@ -18,14 +18,10 @@ enum AVCNALUnitType: UInt8, Equatable {
 }
 
 // MARK: -
-struct AVCNALUnit: NALUnit, Equatable {
-    let refIdc: UInt8
-    let type: AVCNALUnitType
-    let payload: Data
-
-    init(_ data: Data) {
-        self.init(data, length: data.count)
-    }
+package struct AVCNALUnit: NALUnit, Equatable {
+    package let refIdc: UInt8
+    package let type: AVCNALUnitType
+    package let payload: Data
 
     init(_ data: Data, length: Int) {
         self.refIdc = data[0] >> 5
@@ -33,48 +29,14 @@ struct AVCNALUnit: NALUnit, Equatable {
         self.payload = data.subdata(in: 1..<length)
     }
 
-    var data: Data {
+    package init(_ data: Data) {
+        self.init(data, length: data.count)
+    }
+
+    package var data: Data {
         var result = Data()
         result.append(refIdc << 5 | self.type.rawValue)
         result.append(payload)
         return result
-    }
-}
-
-extension [AVCNALUnit] {
-    func makeFormatDescription(_ nalUnitHeaderLength: Int32 = 4) -> CMFormatDescription? {
-        guard
-            let pps = first(where: { $0.type == .pps }),
-            let sps = first(where: { $0.type == .sps }) else {
-            return nil
-        }
-        var formatDescription: CMFormatDescription?
-        let status = pps.data.withUnsafeBytes { (ppsBuffer: UnsafeRawBufferPointer) -> OSStatus in
-            guard let ppsBaseAddress = ppsBuffer.baseAddress else {
-                return kCMFormatDescriptionBridgeError_InvalidParameter
-            }
-            return sps.data.withUnsafeBytes { (spsBuffer: UnsafeRawBufferPointer) -> OSStatus in
-                guard let spsBaseAddress = spsBuffer.baseAddress else {
-                    return kCMFormatDescriptionBridgeError_InvalidParameter
-                }
-                let pointers: [UnsafePointer<UInt8>] = [
-                    spsBaseAddress.assumingMemoryBound(to: UInt8.self),
-                    ppsBaseAddress.assumingMemoryBound(to: UInt8.self)
-                ]
-                let sizes: [Int] = [spsBuffer.count, ppsBuffer.count]
-                return CMVideoFormatDescriptionCreateFromH264ParameterSets(
-                    allocator: kCFAllocatorDefault,
-                    parameterSetCount: pointers.count,
-                    parameterSetPointers: pointers,
-                    parameterSetSizes: sizes,
-                    nalUnitHeaderLength: nalUnitHeaderLength,
-                    formatDescriptionOut: &formatDescription
-                )
-            }
-        }
-        if status != noErr {
-            logger.error(status)
-        }
-        return formatDescription
     }
 }

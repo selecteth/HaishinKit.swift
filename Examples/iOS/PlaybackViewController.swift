@@ -2,6 +2,7 @@ import AVFoundation
 import AVKit
 import Foundation
 import HaishinKit
+import RTMPHaishinKit
 import UIKit
 
 final class PlaybackViewController: UIViewController {

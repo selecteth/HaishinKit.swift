@@ -1,6 +1,7 @@
 import AVFoundation
 import HaishinKit
 import Photos
+import RTMPHaishinKit
 import UIKit
 import VideoToolbox
 
