@@ -65,24 +65,6 @@ public actor SRTConnection {
         }
     }
 
-    /// Open a two-way connection to an application on SRT Server.
-    @available(*, deprecated, renamed: "connect")
-    public func open(_ uri: URL?, mode: SRTMode = .caller) async throws {
-        if uri?.absoluteString.contains("mode=") == true {
-            try await connect(uri)
-        } else {
-            if let uri {
-                if uri.absoluteString.contains("?") {
-                    try await connect(URL(string: uri.absoluteString + "&mode=" + mode.rawValue))
-                } else {
-                    try await connect(URL(string: uri.absoluteString + "?mode=" + mode.rawValue))
-                }
-            } else {
-                try await connect(uri)
-            }
-        }
-    }
-
     /// Creates a connection to the server or waits for an incoming connection.
     ///
     /// - Parameters:
