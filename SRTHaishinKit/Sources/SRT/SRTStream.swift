@@ -10,7 +10,7 @@ public actor SRTStream {
     public private(set) var videoTrackId: UInt8? = UInt8.max
     public private(set) var audioTrackId: UInt8? = UInt8.max
     private var outputs: [any HKStreamOutput] = []
-    private var bitrateStorategy: (any HKStreamBitRateStrategy)?
+    private var bitRateStrategy: (any HKStreamBitRateStrategy)?
     private lazy var writer = TSWriter()
     private lazy var reader = TSReader()
     private lazy var incoming = HKIncomingStream(self)
@@ -144,8 +144,8 @@ extension SRTStream: HKStream {
         outgoing.videoSettings = videoSettings
     }
 
-    public func setBitrateStorategy(_ bitrateStorategy: (some HKStreamBitRateStrategy)?) {
-        self.bitrateStorategy = bitrateStorategy
+    public func setBitRateStrategy(_ bitRateStrategy: (some HKStreamBitRateStrategy)?) {
+        self.bitRateStrategy = bitRateStrategy
     }
 
     public func setVideoInputBufferCounts(_ videoInputBufferCounts: Int) {
@@ -198,7 +198,7 @@ extension SRTStream: HKStream {
     }
 
     public func dispatch(_ event: NetworkMonitorEvent) async {
-        await bitrateStorategy?.adjustBitrate(event, stream: self)
+        await bitRateStrategy?.adjustBitrate(event, stream: self)
     }
 }
 

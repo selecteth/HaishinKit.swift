@@ -14,8 +14,8 @@ public protocol HKStream: Actor, MediaMixerOutput {
     /// The video compression properties.
     var videoSettings: VideoCodecSettings { get }
 
-    /// Sets the bitrate storategy object.
-    func setBitrateStorategy(_ bitrateStorategy: (some HKStreamBitRateStrategy)?)
+    /// Sets the bitrate strategy object.
+    func setBitRateStrategy(_ bitRateStrategy: (some HKStreamBitRateStrategy)?)
 
     /// Sets the audio compression properties.
     func setAudioSettings(_ audioSettings: AudioCodecSettings)
