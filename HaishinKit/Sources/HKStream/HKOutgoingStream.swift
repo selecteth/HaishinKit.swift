@@ -2,16 +2,16 @@ import AVFoundation
 import Foundation
 
 /// An object that provides a stream ingest feature.
-public final class HKOutgoingStream {
-    public private(set) var isRunning = false
+package final class HKOutgoingStream {
+    package private(set) var isRunning = false
 
     /// The asynchronous sequence for audio output.
-    public var audioOutputStream: AsyncStream<(AVAudioBuffer, AVAudioTime)> {
+    package var audioOutputStream: AsyncStream<(AVAudioBuffer, AVAudioTime)> {
         return audioCodec.outputStream
     }
 
     /// Specifies the audio compression properties.
-    public var audioSettings: AudioCodecSettings {
+    package var audioSettings: AudioCodecSettings {
         get {
             audioCodec.settings
         }
@@ -21,15 +21,15 @@ public final class HKOutgoingStream {
     }
 
     /// The audio input format.
-    public private(set) var audioInputFormat: CMFormatDescription?
+    package private(set) var audioInputFormat: CMFormatDescription?
 
     /// The asynchronous sequence for video output.
-    public var videoOutputStream: AsyncStream<CMSampleBuffer> {
+    package var videoOutputStream: AsyncStream<CMSampleBuffer> {
         return videoCodec.outputStream
     }
 
     /// Specifies the video compression properties.
-    public var videoSettings: VideoCodecSettings {
+    package var videoSettings: VideoCodecSettings {
         get {
             videoCodec.settings
         }
@@ -39,10 +39,10 @@ public final class HKOutgoingStream {
     }
 
     /// Specifies the video buffering count.
-    public var videoInputBufferCounts = -1
+    package var videoInputBufferCounts = -1
 
     /// The asynchronous sequence for video input buffer.
-    public var videoInputStream: AsyncStream<CMSampleBuffer> {
+    package var videoInputStream: AsyncStream<CMSampleBuffer> {
         if 0 < videoInputBufferCounts {
             return AsyncStream(CMSampleBuffer.self, bufferingPolicy: .bufferingNewest(videoInputBufferCounts)) { continuation in
                 self.videoInputContinuation = continuation
@@ -55,7 +55,7 @@ public final class HKOutgoingStream {
     }
 
     /// The video input format.
-    public private(set) var videoInputFormat: CMFormatDescription?
+    package private(set) var videoInputFormat: CMFormatDescription?
 
     private var audioCodec = AudioCodec()
     private var videoCodec = VideoCodec()
@@ -66,11 +66,11 @@ public final class HKOutgoingStream {
     }
 
     /// Create a new instance.
-    public init() {
+    package init() {
     }
 
     /// Appends a sample buffer for publish.
-    public func append(_ sampleBuffer: CMSampleBuffer) {
+    package func append(_ sampleBuffer: CMSampleBuffer) {
         switch sampleBuffer.formatDescription?.mediaType {
         case .audio:
             audioInputFormat = sampleBuffer.formatDescription
@@ -84,20 +84,20 @@ public final class HKOutgoingStream {
     }
 
     /// Appends a sample buffer for publish.
-    public func append(_ audioBuffer: AVAudioBuffer, when: AVAudioTime) {
+    package func append(_ audioBuffer: AVAudioBuffer, when: AVAudioTime) {
         audioInputFormat = audioBuffer.format.formatDescription
         audioCodec.append(audioBuffer, when: when)
     }
 
     /// Appends a video buffer.
-    public func append(video sampleBuffer: CMSampleBuffer) {
+    package func append(video sampleBuffer: CMSampleBuffer) {
         videoCodec.append(sampleBuffer)
     }
 }
 
 extension HKOutgoingStream: Runner {
     // MARK: Runner
-    public func startRunning() {
+    package func startRunning() {
         guard !isRunning else {
             return
         }
@@ -106,7 +106,7 @@ extension HKOutgoingStream: Runner {
         isRunning = true
     }
 
-    public func stopRunning() {
+    package func stopRunning() {
         guard isRunning else {
             return
         }

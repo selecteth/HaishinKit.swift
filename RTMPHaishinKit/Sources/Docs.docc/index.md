@@ -1,8 +1,8 @@
-# ``HaishinKit``
-This is the main module. This module supports the RTMP protocol.
+# ``RTMPHaishinKit``
+This module supports the RTMP protocol.
 
 ## Overview
-This is the main module. It provides common functionality for live streaming and supports the RTMP protocol.
+This is a module that supports RTMP protocol. 
 
 ## 📓 RTMP Usage
 ### Ingest

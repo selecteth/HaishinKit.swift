@@ -1,86 +1,37 @@
 # ``HaishinKit``
-This is the main module. This module supports the RTMP protocol.
+This is the main module.
 
 ## Overview
-This is the main module. It provides common functionality for live streaming and supports the RTMP protocol.
+This is the main module. It is mainly responsible for video and audio mixing, and provides a common interface.
 
-## 📓 RTMP Usage
-### Ingest
+## 🎨 Features
+### Session
+This is an API that consolidates the connection handling of RTMP and SRT into a unified interface.
+It encapsulates retry logic and best practices for establishing connections
 ```swift
-let mixer = MediaMixer()
-let connection = RTMPConnection()
-let stream = RTMPStream(connection: connection)
-let hkView = MTHKView(frame: view.bounds)
+import HaishinKit
+import RTMPHaishinKit
+import SRTHaishinKit
 
 Task {
-  do {
-    try await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-  } catch {
-    print(error)
-  }
-
-  do {
-    try await mixer.attachVideo(AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back))
-  } catch {
-    print(error)
-  }
-
-  await mixer.addOutput(stream)
-}
-
-Task { MainActor in
-  await stream.addOutput(hkView)
-  // add ViewController#view
-  view.addSubview(hkView)
-}
-
-Task {
-  do {
-    try await connection.connect("rtmp://localhost/appName/instanceName")
-    try await stream.publish(streamName)
-  } catch RTMPConnection.Error.requestFailed(let response) {
-    print(response)
-  } catch RTMPStream.Error.requestFailed(let response) {
-    print(response)
-  } catch {
-    print(error)
-  }
+  await SessionBuilderFactory.shared.register(RTMPSessionFactory())
+  await SessionBuilderFactory.shared.register(SRTSessionFactory())
 }
 ```
-
-### Playback
 ```swift
-let connection = RTMPConnection()
-let stream = RTMPStream(connection: connection)
-let audioPlayer = AudioPlayer(AVAudioEngine())
+private var session: (any Session)?
+private lazy var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
 
-let hkView = MTHKView(frame: view.bounds)
-
-Task { MainActor in
-  await stream.addOutput(hkView)
-}
-
-Task {
-  // requires attachAudioPlayer
-  await stream.attachAudioPlayer(audioPlayer)
-
-  do {
-    try await connection.connect("rtmp://localhost/appName/instanceName")
-    try await stream.play(streamName)
-  } catch RTMPConnection.Error.requestFailed(let response) {
-    print(response)
-  } catch RTMPStream.Error.requestFailed(let response) {
-    print(response)
-  } catch {
-    print(error)
+do {
+  session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+  guard let session else {
+    return
   }
+  await mixer.addOutput(session.stream)
+  if let view = view as? (any HKStreamOutput) {
+    await session.stream.addOutput(view)
+  }
+} catch {
+  logger.error(error)
 }
 ```
-
-### Authentication
-It supports FME-compatible authentication. Some other services may use their own unique authentication methods, so connection may not be possible in those cases.
-```swift
-var connection = RTMPConnection()
-connection.connect("rtmp://username:password@localhost/appName/instanceName")
-```
-

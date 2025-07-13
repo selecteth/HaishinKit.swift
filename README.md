@@ -28,7 +28,7 @@ Project name    |Notes       |License
 [HaishinKit for Flutter.](https://github.com/HaishinKit/HaishinKit.dart)|Camera and Microphone streaming library via RTMP for Flutter.|[BSD 3-Clause "New" or "Revised" License](https://github.com/HaishinKit/HaishinKit.dart/blob/master/LICENSE.md)
 
 ## 🎨 Features
-### ✏️ [RTMP](HaishinKit/Sources/Docs.docc/index.md)
+### ✏️ [RTMP](RTMPHaishinKit/Sources/Docs.docc/index.md)
 - [x] FMLE-compatible Authentication
 - [x] Ingest
   - H264, HEVC, AAC and OPUS support.
