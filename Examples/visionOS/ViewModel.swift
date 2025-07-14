@@ -1,5 +1,6 @@
 import Foundation
 import HaishinKit
+import RTMPHaishinKit
 
 final class ViewModel: ObservableObject {
     let maxRetryCount: Int = 5

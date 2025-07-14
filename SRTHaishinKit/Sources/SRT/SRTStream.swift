@@ -6,6 +6,9 @@ import libsrt
 
 /// An actor that provides the interface to control a one-way channel over a SRTConnection.
 public actor SRTStream {
+    static let supportedAudioCodecs: [AudioCodecSettings.Format] = [.aac]
+    static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
+
     @Published public private(set) var readyState: HKStreamReadyState = .idle
     public private(set) var videoTrackId: UInt8? = UInt8.max
     public private(set) var audioTrackId: UInt8? = UInt8.max
@@ -16,6 +19,12 @@ public actor SRTStream {
     private lazy var incoming = HKIncomingStream(self)
     private lazy var outgoing = HKOutgoingStream()
     private weak var connection: SRTConnection?
+
+    /// SRTStream error domain codes.
+    public enum Error: Swift.Error {
+        // An unsupported codec.
+        case unsupportedCodec
+    }
 
     /// Creates a new stream object.
     public init(connection: SRTConnection) {
@@ -136,11 +145,17 @@ extension SRTStream: HKStream {
         outgoing.videoSettings
     }
 
-    public func setAudioSettings(_ audioSettings: AudioCodecSettings) {
+    public func setAudioSettings(_ audioSettings: AudioCodecSettings) throws {
+        guard Self.supportedAudioCodecs.contains(audioSettings.format) else {
+            throw Error.unsupportedCodec
+        }
         outgoing.audioSettings = audioSettings
     }
 
-    public func setVideoSettings(_ videoSettings: VideoCodecSettings) {
+    public func setVideoSettings(_ videoSettings: VideoCodecSettings) throws {
+        guard Self.supportedVideoCodecs.contains(videoSettings.format) else {
+            throw Error.unsupportedCodec
+        }
         outgoing.videoSettings = videoSettings
     }
 

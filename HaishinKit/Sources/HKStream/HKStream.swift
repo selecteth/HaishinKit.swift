@@ -18,10 +18,10 @@ public protocol HKStream: Actor, MediaMixerOutput {
     func setBitRateStrategy(_ bitRateStrategy: (some HKStreamBitRateStrategy)?)
 
     /// Sets the audio compression properties.
-    func setAudioSettings(_ audioSettings: AudioCodecSettings)
+    func setAudioSettings(_ audioSettings: AudioCodecSettings) throws
 
     /// Sets the video compression properties.
-    func setVideoSettings(_ videoSettings: VideoCodecSettings)
+    func setVideoSettings(_ videoSettings: VideoCodecSettings) throws
 
     /// Sets the sound transform value control.
     func setSoundTransform(_ soundTransfrom: SoundTransform) async

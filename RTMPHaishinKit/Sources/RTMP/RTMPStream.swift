@@ -23,6 +23,8 @@ public actor RTMPStream {
         case requestTimedOut
         /// A request fails.
         case requestFailed(response: RTMPResponse)
+        /// An unsupported codec.
+        case unsupportedCodec
     }
 
     /// NetStatusEvent#info.code for NetStream
@@ -169,6 +171,9 @@ public actor RTMPStream {
     }
 
     static let defaultID: UInt32 = 0
+    static let supportedAudioCodecs: [AudioCodecSettings.Format] = AudioCodecSettings.Format.allCases
+    static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
+
     /// The RTMPStream metadata.
     public private(set) var metadata: AMFArray = .init(count: 0)
     /// The RTMPStreamInfo object whose properties contain data.
@@ -709,16 +714,22 @@ extension RTMPStream: HKStream {
     public var audioSettings: AudioCodecSettings {
         outgoing.audioSettings
     }
-
-    public func setAudioSettings(_ audioSettings: AudioCodecSettings) {
-        outgoing.audioSettings = audioSettings
-    }
-
+    
     public var videoSettings: VideoCodecSettings {
         outgoing.videoSettings
     }
 
-    public func setVideoSettings(_ videoSettings: VideoCodecSettings) {
+    public func setAudioSettings(_ audioSettings: AudioCodecSettings) throws {
+        guard Self.supportedAudioCodecs.contains(audioSettings.format) else {
+            throw Error.unsupportedCodec
+        }
+        outgoing.audioSettings = audioSettings
+    }
+
+    public func setVideoSettings(_ videoSettings: VideoCodecSettings) throws {
+        guard Self.supportedVideoCodecs.contains(videoSettings.format) else {
+            throw Error.unsupportedCodec
+        }
         outgoing.videoSettings = videoSettings
     }
 

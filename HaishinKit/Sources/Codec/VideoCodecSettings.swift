@@ -53,7 +53,7 @@ public struct VideoCodecSettings: Codable, Sendable {
     }
 
     /// The type of the VideoCodec supports format.
-    public enum Format: Codable, Sendable {
+    package enum Format: Codable, Sendable, CaseIterable {
         case h264
         case hevc
 
