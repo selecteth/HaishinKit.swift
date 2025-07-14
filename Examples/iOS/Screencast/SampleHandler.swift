@@ -91,7 +91,7 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
                     )
                     videoSettings?.profileLevel = kVTProfileLevel_H264_Baseline_AutoLevel as String
                     if let videoSettings {
-                        await session?.stream.setVideoSettings(videoSettings)
+                        try? await session?.stream.setVideoSettings(videoSettings)
                     }
                     needVideoConfiguration = false
                 }

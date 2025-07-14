@@ -36,7 +36,7 @@ public final actor HKStreamVideoAdaptiveBitRateStrategy: HKStreamBitRateStrategy
             if Self.statusCountsThreshold <= sufficientBWCounts {
                 let incremental = mamimumVideoBitRate / 10
                 videoSettings.bitRate = min(videoSettings.bitRate + incremental, mamimumVideoBitRate)
-                await stream.setVideoSettings(videoSettings)
+                try? await stream.setVideoSettings(videoSettings)
                 sufficientBWCounts = 0
             } else {
                 sufficientBWCounts += 1
@@ -60,14 +60,14 @@ public final actor HKStreamVideoAdaptiveBitRateStrategy: HKStreamBitRateStrategy
                 default:
                     break
                 }
-                await stream.setVideoSettings(videoSettings)
+                try? await stream.setVideoSettings(videoSettings)
                 zeroBytesOutPerSecondCounts += 1
             }
         case .reset:
             var videoSettings = await stream.videoSettings
             zeroBytesOutPerSecondCounts = 0
             videoSettings.bitRate = mamimumVideoBitRate
-            await stream.setVideoSettings(videoSettings)
+            try? await stream.setVideoSettings(videoSettings)
         }
     }
 }

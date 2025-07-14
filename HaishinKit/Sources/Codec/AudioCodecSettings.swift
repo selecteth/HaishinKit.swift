@@ -11,7 +11,7 @@ public struct AudioCodecSettings: Codable, Sendable {
     public static let maximumNumberOfChannels: UInt32 = 8
 
     /// The type of the AudioCodec supports format.
-    public enum Format: Codable, Sendable {
+    public enum Format: Codable, Sendable, CaseIterable {
         /// The AAC format.
         case aac
         /// The OPUS format.

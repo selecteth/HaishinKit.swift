@@ -1,6 +1,7 @@
 import AVFAudio
 import HaishinKit
 import Logboard
+import RTMPHaishinKit
 import SRTHaishinKit
 import UIKit
 

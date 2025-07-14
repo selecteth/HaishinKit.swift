@@ -163,7 +163,7 @@ final class IngestViewController: UIViewController {
                 }
                 audioBitrateLabel?.text = "audio \(Int(slider.value))/kbps"
                 audioSettings.bitRate = Int(slider.value * 1000)
-                await session?.stream.setAudioSettings(audioSettings)
+                try? await session?.stream.setAudioSettings(audioSettings)
             }
         }
         if slider == videoBitrateSlider {
@@ -173,7 +173,7 @@ final class IngestViewController: UIViewController {
                 }
                 videoBitrateLabel?.text = "video \(Int(slider.value))/kbps"
                 videoSettings.bitRate = Int(slider.value * 1000)
-                await session?.stream.setVideoSettings(videoSettings)
+                try? await session?.stream.setVideoSettings(videoSettings)
             }
         }
         if slider == zoomSlider {

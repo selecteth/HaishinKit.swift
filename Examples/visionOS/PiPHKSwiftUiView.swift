@@ -1,4 +1,5 @@
 import HaishinKit
+import RTMPHaishinKit
 import SwiftUI
 
 struct PiPHKSwiftUiView: UIViewRepresentable {
