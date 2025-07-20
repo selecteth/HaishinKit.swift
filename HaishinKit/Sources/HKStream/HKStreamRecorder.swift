@@ -5,13 +5,13 @@
 ///
 /// This actor is compatible with both HKStreamOutput and MediaMixerOutput. This means it can record the output from MediaMixer in addition to HKStream.
 ///
-/// ```
+/// ```swift
 ///  // An example of recording MediaMixer.
 ///  let recorder = HKStreamRecorder()
 ///  let mixer = MediaMixer()
 ///  mixer.addOutput(recorder)
 /// ```
-/// ```
+/// ```swift
 ///  // An example of recording streaming.
 ///  let recorder = HKStreamRecorder()
 ///  let mixer = MediaMixer()
