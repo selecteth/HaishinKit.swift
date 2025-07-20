@@ -15,7 +15,7 @@ public actor RTMPConnection: NetworkConnection {
         /// The connected operation timed out.
         case connectionTimedOut
         /// The general socket error.
-        case socketErrorOccurred(_ error: any Swift.Error)
+        case socketErrorOccurred(_ error: (any Swift.Error)?)
         /// The requested operation timed out.
         case requestTimedOut
         /// A request fails.
@@ -368,8 +368,10 @@ public actor RTMPConnection: NetworkConnection {
             switch error {
             case .connectionTimedOut:
                 throw Error.connectionTimedOut
+            case .connectionNotEstablished(let socketError):
+                throw Error.socketErrorOccurred(socketError)
             default:
-                throw Error.socketErrorOccurred(error)
+                throw Error.socketErrorOccurred(nil)
             }
         } catch let error as Error {
             switch error {
