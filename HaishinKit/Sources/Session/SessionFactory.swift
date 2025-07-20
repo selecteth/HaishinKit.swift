@@ -6,5 +6,5 @@ public protocol SessionFactory {
     var supportedProtocols: Set<String> { get }
 
     /// Makes a new session by uri.
-    func make(uri: URL) -> any Session
+    func make(_ uri: URL) -> any Session
 }

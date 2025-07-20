@@ -46,7 +46,7 @@ public actor SessionBuilderFactory {
             throw Error.illegalArgument
         }
         for factory in factories where factory.supportedProtocols.contains(uri.scheme ?? "") {
-            return factory.make(uri: uri)
+            return factory.make(uri)
         }
         throw Error.notFound
     }
