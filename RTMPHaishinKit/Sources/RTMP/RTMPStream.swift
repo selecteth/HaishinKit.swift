@@ -714,7 +714,7 @@ extension RTMPStream: HKStream {
     public var audioSettings: AudioCodecSettings {
         outgoing.audioSettings
     }
-    
+
     public var videoSettings: VideoCodecSettings {
         outgoing.videoSettings
     }
