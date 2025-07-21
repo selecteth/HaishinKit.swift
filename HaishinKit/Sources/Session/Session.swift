@@ -13,7 +13,7 @@ public protocol Session: Actor {
     var isConnected: Bool { get async }
 
     /// The stream instance.
-    var stream: any HKStream { get }
+    var stream: any StreamConvertible { get }
 
     /// Creates a new session with uri.
     init(uri: URL)

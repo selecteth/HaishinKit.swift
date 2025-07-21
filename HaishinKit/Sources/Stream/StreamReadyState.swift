@@ -1,7 +1,7 @@
 import Foundation
 
 /// The enumeration defines the state a HKStream client is in.
-public enum HKStreamReadyState: Int, Sendable {
+public enum StreamReadyState: Int, Sendable {
     /// The stream is idling.
     case idle
     /// The stream has sent a request to play and is waiting for approval from the server.

@@ -39,7 +39,7 @@ final class ViewController: UIViewController {
                     return
                 }
                 await mixer.addOutput(session.stream)
-                if let view = view as? (any HKStreamOutput) {
+                if let view = view as? (any StreamOutput) {
                     await session.stream.addOutput(view)
                 }
             } catch {

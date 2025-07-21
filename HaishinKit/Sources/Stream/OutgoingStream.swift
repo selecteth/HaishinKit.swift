@@ -2,7 +2,7 @@ import AVFoundation
 import Foundation
 
 /// An object that provides a stream ingest feature.
-package final class HKOutgoingStream {
+package final class OutgoingStream {
     package private(set) var isRunning = false
 
     /// The asynchronous sequence for audio output.
@@ -95,7 +95,7 @@ package final class HKOutgoingStream {
     }
 }
 
-extension HKOutgoingStream: Runner {
+extension OutgoingStream: Runner {
     // MARK: Runner
     package func startRunning() {
         guard !isRunning else {

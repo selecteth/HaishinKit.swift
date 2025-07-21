@@ -8,7 +8,7 @@ actor RTMPSession: Session {
         }
     }
 
-    var stream: any HKStream {
+    var stream: any StreamConvertible {
         _stream
     }
 

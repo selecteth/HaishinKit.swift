@@ -1,18 +1,18 @@
 import Foundation
 
 /// A type with a network bitrate strategy representation.
-public protocol HKStreamBitRateStrategy: Sendable {
+public protocol StreamBitRateStrategy: Sendable {
     /// The mamimum video bitRate.
     var mamimumVideoBitRate: Int { get }
     /// The mamimum audio bitRate.
     var mamimumAudioBitRate: Int { get }
 
     /// Adjust a bitRate.
-    func adjustBitrate(_ event: NetworkMonitorEvent, stream: some HKStream) async
+    func adjustBitrate(_ event: NetworkMonitorEvent, stream: some StreamConvertible) async
 }
 
 /// An actor provides an algorithm that focuses on video bitrate control.
-public final actor HKStreamVideoAdaptiveBitRateStrategy: HKStreamBitRateStrategy {
+public final actor StreamVideoAdaptiveBitRateStrategy: StreamBitRateStrategy {
     /// The status counts threshold for restoring the status
     public static let statusCountsThreshold: Int = 15
 
@@ -26,7 +26,7 @@ public final actor HKStreamVideoAdaptiveBitRateStrategy: HKStreamBitRateStrategy
         self.mamimumVideoBitRate = mamimumVideoBitrate
     }
 
-    public func adjustBitrate(_ event: NetworkMonitorEvent, stream: some HKStream) async {
+    public func adjustBitrate(_ event: NetworkMonitorEvent, stream: some StreamConvertible) async {
         switch event {
         case .status:
             var videoSettings = await stream.videoSettings

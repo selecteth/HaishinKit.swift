@@ -3,23 +3,23 @@
 // MARK: -
 /// An actor represents video and audio recorder.
 ///
-/// This actor is compatible with both HKStreamOutput and MediaMixerOutput. This means it can record the output from MediaMixer in addition to HKStream.
+/// This actor is compatible with both StreamOutput and MediaMixerOutput. This means it can record the output from MediaMixer in addition to StreamConvertible.
 ///
 /// ```swift
 ///  // An example of recording MediaMixer.
-///  let recorder = HKStreamRecorder()
+///  let recorder = StreamRecorder()
 ///  let mixer = MediaMixer()
 ///  mixer.addOutput(recorder)
 /// ```
 /// ```swift
 ///  // An example of recording streaming.
-///  let recorder = HKStreamRecorder()
+///  let recorder = StreamRecorder()
 ///  let mixer = MediaMixer()
 ///  let stream = RTMPStream()
 ///  mixer.addOutput(stream)
 ///  stream.addOutput(recorder)
 /// ```
-public actor HKStreamRecorder {
+public actor StreamRecorder {
     static let defaultPathExtension = "mp4"
 
     /// The error domain codes.
@@ -80,7 +80,7 @@ public actor HKStreamRecorder {
     }
 
     /// The recorder settings.
-    public private(set) var settings: [AVMediaType: [String: any Sendable]] = HKStreamRecorder.defaultSettings
+    public private(set) var settings: [AVMediaType: [String: any Sendable]] = StreamRecorder.defaultSettings
     /// The recording output url.
     public var outputURL: URL? {
         return writer?.outputURL
@@ -157,7 +157,7 @@ public actor HKStreamRecorder {
     ///   - settings: Settings for recording.
     /// - Throws: `Error.fileAlreadyExists` when case file already exists.
     /// - Throws: `Error.notSupportedFileType` when case species not supported format.
-    public func startRecording(_ url: URL? = nil, settings: [AVMediaType: [String: any Sendable]] = HKStreamRecorder.defaultSettings) async throws {
+    public func startRecording(_ url: URL? = nil, settings: [AVMediaType: [String: any Sendable]] = StreamRecorder.defaultSettings) async throws {
         guard !isRecording else {
             throw Error.invalidState
         }
@@ -338,13 +338,13 @@ public actor HKStreamRecorder {
     }
 }
 
-extension HKStreamRecorder: HKStreamOutput {
+extension StreamRecorder: StreamOutput {
     // MARK: HKStreamOutput
-    nonisolated public func stream(_ stream: some HKStream, didOutput video: CMSampleBuffer) {
+    nonisolated public func stream(_ stream: some StreamConvertible, didOutput video: CMSampleBuffer) {
         Task { await append(video) }
     }
 
-    nonisolated public func stream(_ stream: some HKStream, didOutput audio: AVAudioBuffer, when: AVAudioTime) {
+    nonisolated public func stream(_ stream: some StreamConvertible, didOutput audio: AVAudioBuffer, when: AVAudioTime) {
         guard let sampleBuffer = (audio as? AVAudioPCMBuffer)?.makeSampleBuffer(when) else {
             return
         }
@@ -352,7 +352,7 @@ extension HKStreamRecorder: HKStreamOutput {
     }
 }
 
-extension HKStreamRecorder: MediaMixerOutput {
+extension StreamRecorder: MediaMixerOutput {
     // MARK: MediaMixerOutput
     nonisolated public func mixer(_ mixer: MediaMixer, didOutput sampleBuffer: CMSampleBuffer) {
         Task {

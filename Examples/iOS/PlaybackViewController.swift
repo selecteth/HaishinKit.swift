@@ -21,7 +21,7 @@ final class PlaybackViewController: UIViewController {
             do {
                 session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
                 if let session {
-                    if let view = view as? (any HKStreamOutput) {
+                    if let view = view as? (any StreamOutput) {
                         await session.stream.addOutput(view)
                     }
                     await session.stream.attachAudioPlayer(audioPlayer)

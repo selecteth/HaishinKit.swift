@@ -8,7 +8,7 @@ actor SRTSession: Session {
         }
     }
 
-    var stream: any HaishinKit.HKStream {
+    var stream: any StreamConvertible {
         _stream
     }
 

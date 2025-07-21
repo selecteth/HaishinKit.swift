@@ -187,7 +187,7 @@ public actor RTMPStream {
     /// The number of video frames per seconds.
     @Published public private(set) var currentFPS: UInt16 = 0
     /// The ready state of stream.
-    @Published public private(set) var readyState: HKStreamReadyState = .idle
+    @Published public private(set) var readyState: StreamReadyState = .idle
     /// The stream of events you receive RTMP status events from a service.
     public var status: AsyncStream<RTMPStatus> {
         AsyncStream { continuation in
@@ -206,7 +206,7 @@ public actor RTMPStream {
             dataTimestamps.removeAll()
         }
     }
-    private var outputs: [any HKStreamOutput] = []
+    package var outputs: [any StreamOutput] = []
     private var frameCount: UInt16 = 0
     private var audioBuffer: AVAudioCompressedBuffer?
     private var howToPublish: RTMPStream.HowToPublish = .live
@@ -222,11 +222,11 @@ public actor RTMPStream {
     private var videoTimestamp: RTMPTimestamp<CMTime> = .init()
     private var requestTimeout = RTMPConnection.defaultRequestTimeout
     private var expectedResponse: Code?
-    private var bitRateStrategy: (any HKStreamBitRateStrategy)?
+    package var bitRateStrategy: (any StreamBitRateStrategy)?
     private var statusContinuation: AsyncStream<RTMPStatus>.Continuation?
     private(set) var id: UInt32 = RTMPStream.defaultID
-    private lazy var incoming = HKIncomingStream(self)
-    private lazy var outgoing = HKOutgoingStream()
+    package lazy var incoming = IncomingStream(self)
+    package lazy var outgoing = OutgoingStream()
     private weak var connection: RTMPConnection?
 
     private var audioFormat: AVAudioFormat? {
@@ -703,22 +703,7 @@ public actor RTMPStream {
     }
 }
 
-extension RTMPStream: HKStream {
-    // MARK: HKStream
-    public var soundTransform: SoundTransform? {
-        get async {
-            await incoming.soundTransfrom
-        }
-    }
-
-    public var audioSettings: AudioCodecSettings {
-        outgoing.audioSettings
-    }
-
-    public var videoSettings: VideoCodecSettings {
-        outgoing.videoSettings
-    }
-
+extension RTMPStream: _Stream {
     public func setAudioSettings(_ audioSettings: AudioCodecSettings) throws {
         guard Self.supportedAudioCodecs.contains(audioSettings.format) else {
             throw Error.unsupportedCodec
@@ -731,14 +716,6 @@ extension RTMPStream: HKStream {
             throw Error.unsupportedCodec
         }
         outgoing.videoSettings = videoSettings
-    }
-
-    public func setSoundTransform(_ soundTransform: SoundTransform) async {
-        await incoming.setSoundTransform(soundTransform)
-    }
-
-    public func setVideoInputBufferCounts(_ videoInputBufferCounts: Int) {
-        outgoing.videoInputBufferCounts = videoInputBufferCounts
     }
 
     public func append(_ sampleBuffer: CMSampleBuffer) {
@@ -800,27 +777,6 @@ extension RTMPStream: HKStream {
                 outputs.forEach { $0.stream(self, didOutput: audioBuffer, when: when) }
             }
         }
-    }
-
-    public func attachAudioPlayer(_ audioPlayer: AudioPlayer?) async {
-        await incoming.attachAudioPlayer(audioPlayer)
-    }
-
-    public func addOutput(_ observer: some HKStreamOutput) {
-        guard !outputs.contains(where: { $0 === observer }) else {
-            return
-        }
-        outputs.append(observer)
-    }
-
-    public func removeOutput(_ observer: some HKStreamOutput) {
-        if let index = outputs.firstIndex(where: { $0 === observer }) {
-            outputs.remove(at: index)
-        }
-    }
-
-    public func setBitRateStrategy(_ bitRateStrategy: (some HKStreamBitRateStrategy)?) {
-        self.bitRateStrategy = bitRateStrategy
     }
 
     public func dispatch(_ event: NetworkMonitorEvent) async {

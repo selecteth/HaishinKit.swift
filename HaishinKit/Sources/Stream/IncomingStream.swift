@@ -2,7 +2,7 @@
 import Foundation
 
 /// An actor that provides a stream playback feature.
-package final actor HKIncomingStream {
+package final actor IncomingStream {
     public private(set) var isRunning = false
     /// The sound transform value control.
     public var soundTransfrom: SoundTransform? {
@@ -13,11 +13,11 @@ package final actor HKIncomingStream {
     private lazy var mediaLink = MediaLink()
     private lazy var audioCodec = AudioCodec()
     private lazy var videoCodec = VideoCodec()
-    private weak var stream: (any HKStream)?
+    private weak var stream: (any StreamConvertible)?
     private var audioPlayerNode: AudioPlayerNode?
 
     /// Creates a new instance.
-    public init(_ stream: some HKStream) {
+    public init(_ stream: some StreamConvertible) {
         self.stream = stream
     }
 
@@ -51,7 +51,7 @@ package final actor HKIncomingStream {
     }
 }
 
-extension HKIncomingStream: AsyncRunner {
+extension IncomingStream: AsyncRunner {
     // MARK: AsyncRunner
     public func startRunning() {
         guard !isRunning else {
