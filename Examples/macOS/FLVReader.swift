@@ -1,6 +1,7 @@
 import AVFoundation
 import Foundation
-@testable import HaishinKit
+import HaishinKit
+@testable import RTMPHaishinKit
 
 /// The type of flv tag.
 public enum FLVTagType: UInt8 {
@@ -34,7 +35,7 @@ public enum FLVTagType: UInt8 {
 
 // MARK: -
 /// The interface of FLV tag.
-public protocol FLVTag: CustomDebugStringConvertible {
+public protocol FLVTag {
     /// The type of this tag.
     var tagType: FLVTagType { get set }
     /// The length of data int the field.
@@ -72,11 +73,6 @@ extension FLVTag {
         } catch {
             return nil
         }
-    }
-
-    // MARK: CustomDebugStringConvertible
-    public var debugDescription: String {
-        Mirror(reflecting: self).debugDescription
     }
 }
 
