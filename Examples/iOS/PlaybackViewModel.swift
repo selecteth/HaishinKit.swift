@@ -1,0 +1,90 @@
+@preconcurrency import AVKit
+import HaishinKit
+import SwiftUI
+
+actor PlaybackViewModel: ObservableObject {
+    enum State {
+        case closed
+        case connecting
+        case connected
+    }
+
+    @MainActor
+    private var view: PiPHKView?
+    @MainActor
+    private var pictureInPictureController: AVPictureInPictureController?
+
+    @MainActor
+    @Published
+    private(set) var state: State = .closed
+    private var session: (any Session)?
+    private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
+
+    func start() async throws {
+        do {
+            Task { @MainActor in state = .connecting }
+            try await session?.connect(.playback)
+            Task { @MainActor in state = .connected }
+        } catch {
+            Task { @MainActor in state = .closed }
+            throw error
+        }
+    }
+
+    func stop() async {
+        do {
+            try await session?.close()
+        } catch {
+            logger.error(error)
+        }
+    }
+
+    func makeSession() async {
+        do {
+            session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+            await session?.setMaxRetryCount(0)
+            guard let session else {
+                return
+            }
+            if let view = await view {
+                await session.stream.addOutput(view)
+            }
+            await session.stream.attachAudioPlayer(audioPlayer)
+        } catch {
+            logger.error(error)
+        }
+    }
+}
+
+extension PlaybackViewModel: PiPHKSwiftUiView.PreviewSource {
+    // MARK: PiPHKSwiftUiView.PreviewSource
+    func connect(to view: HaishinKit.PiPHKView) async {
+        Task { @MainActor in
+            self.view = view
+            if pictureInPictureController == nil {
+                pictureInPictureController = AVPictureInPictureController(contentSource: .init(sampleBufferDisplayLayer: view.layer, playbackDelegate: PlaybackDelegate()))
+            }
+        }
+    }
+}
+
+final class PlaybackDelegate: NSObject, AVPictureInPictureSampleBufferPlaybackDelegate {
+    // MARK: AVPictureInPictureControllerDelegate
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, setPlaying playing: Bool) {
+    }
+
+    func pictureInPictureControllerTimeRangeForPlayback(_ pictureInPictureController: AVPictureInPictureController) -> CMTimeRange {
+        return CMTimeRange(start: .zero, duration: .positiveInfinity)
+    }
+
+    func pictureInPictureControllerIsPlaybackPaused(_ pictureInPictureController: AVPictureInPictureController) -> Bool {
+        return false
+    }
+
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, didTransitionToRenderSize newRenderSize: CMVideoDimensions) {
+    }
+
+    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, skipByInterval skipInterval: CMTime, completion completionHandler: @escaping () -> Void) {
+        completionHandler()
+    }
+}
