@@ -10,6 +10,9 @@
 * README.md contains unreleased content, which can be tested on the main branch.
 * [API Documentation](https://docs.haishinkit.com/swift/latest/documentation/)
 
+## 🎖️ 10th Anniversary
+In development for 10 years, with 2,778 commits and 163 releases. Thank you. Since Aug 2, 2015.
+
 ## 💖 Sponsors
 Do you need additional support? Technical support on Issues and Discussions is provided only to contributors and academic researchers of HaishinKit. By becoming a sponsor, we can provide the support you need.
 
