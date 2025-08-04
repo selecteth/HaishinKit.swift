@@ -5,7 +5,7 @@ import HaishinKit
 
 // MARK: -
 /// The RTMPConnection class create a two-way RTMP connection.
-public actor RTMPConnection: NetworkConnection {
+public actor RTMPConnection: HaishinKit.NetworkConnection {
     /// The error domain code.
     public enum Error: Swift.Error {
         /// An invalid internal stare.
