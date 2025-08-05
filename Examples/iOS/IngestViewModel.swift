@@ -14,7 +14,7 @@ actor IngestViewModel: ObservableObject {
 
     // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
     // let mixer = MediaMixer(multiCamSessionEnabled: true)
-    private(set) var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false, useManualCapture: true)
+    private(set) var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false)
     private var session: (any Session)?
     private var currentPosition: AVCaptureDevice.Position = .back
     @ScreenActor
