@@ -99,7 +99,6 @@ public final actor MediaMixer {
     private var outputs: [any MediaMixerOutput] = []
     @MainActor
     private var cancellables: Set<AnyCancellable> = []
-    private let useManualCapture: Bool
     private lazy var audioIO = AudioCaptureUnit(session)
     private lazy var videoIO = VideoCaptureUnit(session)
     private lazy var session = CaptureSession()
@@ -112,32 +111,24 @@ public final actor MediaMixer {
     /// - Parameters:
     ///   - multiCamSessionEnabled: Specifies the AVCaptureMultiCamSession enabled.
     ///   - multiTrackAudioMixingEnabled: Specifies the feature to mix multiple audio tracks. For example, it is possible to mix .appAudio and .micAudio from ReplayKit.
-    ///   - useManualCapture: Specifies whether to start capturing manually. #1642
     public init(
         multiCamSessionEnabled: Bool = true,
-        multiTrackAudioMixingEnabled: Bool = false,
-        useManualCapture: Bool = false
+        multiTrackAudioMixingEnabled: Bool = false
     ) {
-        self.useManualCapture = useManualCapture
         Task {
             await _init(
                 multiCamSessionEnabled: multiCamSessionEnabled,
-                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled,
-                useManualCapture: useManualCapture
+                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled
             )
         }
     }
 
     private func _init(
         multiCamSessionEnabled: Bool,
-        multiTrackAudioMixingEnabled: Bool,
-        useManualCapture: Bool
+        multiTrackAudioMixingEnabled: Bool
     ) async {
         session.isMultiCamSessionEnabled = multiCamSessionEnabled
         audioIO.isMultiTrackAudioMixingEnabled = multiTrackAudioMixingEnabled
-        if !useManualCapture {
-            startRunning()
-        }
     }
 
     #else
@@ -145,28 +136,20 @@ public final actor MediaMixer {
     ///
     /// - Parameters:
     ///   - multiTrackAudioMixingEnabled: Specifies the feature to mix multiple audio tracks. For example, it is possible to mix .appAudio and .micAudio from ReplayKit.
-    ///   - useManualCapture: Specifies whether to start capturing manually. #1642
     public init(
         multiTrackAudioMixingEnabled: Bool = false,
-        useManualCapture: Bool = false
-    ) {
-        self.useManualCapture = useManualCapture
+        ) {
         Task {
             await _init(
-                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled,
-                useManualCapture: useManualCapture
+                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled
             )
         }
     }
 
     private func _init(
-        multiTrackAudioMixingEnabled: Bool,
-        useManualCapture: Bool
+        multiTrackAudioMixingEnabled: Bool
     ) async {
         audioIO.isMultiTrackAudioMixingEnabled = multiTrackAudioMixingEnabled
-        if !useManualCapture {
-            startRunning()
-        }
     }
     #endif
 
@@ -337,11 +320,6 @@ public final actor MediaMixer {
             return
         }
         outputs.append(output)
-        if #available(tvOS 17.0, *) {
-            if !isCapturing && !useManualCapture {
-                startCapturing()
-            }
-        }
     }
 
     /// Removes an output observer.
@@ -470,9 +448,7 @@ extension MediaMixer: AsyncRunner {
             }
         }
         setVideoRenderingMode(videoMixerSettings.mode)
-        if useManualCapture {
-            session.startRunning()
-        }
+        session.startRunning()
         #if os(iOS) || os(tvOS) || os(visionOS)
         Task { @MainActor in
             NotificationCenter
@@ -500,9 +476,7 @@ extension MediaMixer: AsyncRunner {
             return
         }
         isRunning = false
-        if useManualCapture {
-            session.stopRunning()
-        }
+        session.stopRunning()
         audioIO.finish()
         videoIO.finish()
         Task { @MainActor in
