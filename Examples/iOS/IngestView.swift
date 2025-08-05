@@ -1,4 +1,5 @@
 import AVFoundation
+import HaishinKit
 import SwiftUI
 
 enum FPS: String, CaseIterable, Identifiable {
@@ -17,7 +18,23 @@ enum FPS: String, CaseIterable, Identifiable {
         }
     }
 
-    var id: String { String(rawValue) }
+    var id: Self { self }
+}
+
+enum VideoEffectItem: String, CaseIterable, Identifiable, Sendable {
+    case none
+    case monochrome
+
+    var id: Self { self }
+
+    func makeVideoEffect() -> VideoEffect? {
+        switch self {
+        case .none:
+            return nil
+        case .monochrome:
+            return MonochromeEffect()
+        }
+    }
 }
 
 struct IngestView: View {
@@ -66,6 +83,20 @@ struct IngestView: View {
                 .frame(width: 150)
                 .padding()
                 Spacer()
+            }
+            VStack {
+                Spacer()
+                TabView(selection: $model.visualEffectItem) {
+                    ForEach(VideoEffectItem.allCases) {
+                        Text($0.rawValue).padding()
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+                .frame(height: 120)
+                .padding(.bottom, 32)
+                .onChange(of: model.visualEffectItem) { tag in
+                    Task { await model.setVisualEffet(tag) }
+                }
             }
             VStack {
                 Spacer()

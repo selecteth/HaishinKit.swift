@@ -3,15 +3,10 @@ import HaishinKit
 import SwiftUI
 
 actor IngestViewModel: ObservableObject {
-    @MainActor
-    @Published var currentFPS: FPS = .fps30
-
-    @MainActor
-    @Published private(set) var isTorchEnabled = false
-
-    @MainActor
-    @Published private(set) var isIngesting = false
-
+    @MainActor @Published var currentFPS: FPS = .fps30
+    @MainActor @Published var visualEffectItem: VideoEffectItem = .none
+    @MainActor @Published private(set) var isTorchEnabled = false
+    @MainActor @Published private(set) var isIngesting = false
     // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
     // let mixer = MediaMixer(multiCamSessionEnabled: true)
     private(set) var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false)
@@ -19,6 +14,8 @@ actor IngestViewModel: ObservableObject {
     private var currentPosition: AVCaptureDevice.Position = .back
     @ScreenActor
     private var videoScreenObject = VideoTrackScreenObject()
+    @ScreenActor
+    private var currentVideoEffect: VideoEffect?
 
     func startIngest() async {
         do {
@@ -114,6 +111,18 @@ actor IngestViewModel: ObservableObject {
                 videoUnit.isVideoMirrored = position == .front
             }
             currentPosition = position
+        }
+    }
+
+    func setVisualEffet(_ videoEffect: VideoEffectItem) async {
+        Task { @ScreenActor in
+            if let currentVideoEffect {
+                _ = await mixer.screen.unregisterVideoEffect(currentVideoEffect)
+            }
+            if let videoEffect = videoEffect.makeVideoEffect() {
+                currentVideoEffect = videoEffect
+                _ = await mixer.screen.registerVideoEffect(videoEffect)
+            }
         }
     }
 
