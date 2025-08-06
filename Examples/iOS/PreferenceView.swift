@@ -7,22 +7,27 @@ struct PreferenceView: View {
     var body: some View {
         Form {
             Section {
-                TextField(Preference.default.uri ?? "", text: $url)
-                    .onSubmit {
-                        Preference.default.uri = url
-                    }
+                HStack {
+                    Text("URL")
+                        .frame(width: 80, alignment: .leading)
+                        .foregroundColor(.secondary)
+                    TextField(Preference.default.uri ?? "", text: $url)
+                        .onSubmit {
+                            Preference.default.uri = url
+                        }
+                }.padding(.vertical, 4)
+                HStack {
+                    Text("Name")
+                        .frame(width: 80, alignment: .leading)
+                        .foregroundColor(.secondary)
+                    TextField(Preference.default.streamName ?? "", text: $streamName)
+                        .onSubmit {
+                            Preference.default.streamName = streamName
+                        }
+                }.padding(.vertical, 4)
             } header: {
-                Text("Stream URL:")
+                Text("Stream")
             }
-            Section {
-                TextField(Preference.default.streamName ?? "", text: $streamName)
-                    .onSubmit {
-                        Preference.default.streamName = streamName
-                    }
-            } header: {
-                Text("Stream name:")
-            }
-        }.onAppear {
         }
     }
 }
