@@ -134,7 +134,27 @@ actor IngestViewModel: ObservableObject {
     }
 
     func setFrameRate(_ fps: Float64) async {
-        await mixer.setFrameRate(fps)
+        do {
+            // Sets to input frameRate.
+            try? await mixer.configuration(video: 0) { video in
+                do {
+                    try video.setFrameRate(fps)
+                } catch {
+                    logger.error(error)
+                }
+            }
+            try? await mixer.configuration(video: 1) { video in
+                do {
+                    try video.setFrameRate(fps)
+                } catch {
+                    logger.error(error)
+                }
+            }
+            // Sets to output frameRate.
+            try await mixer.setFrameRate(fps)
+        } catch {
+            logger.error(error)
+        }
     }
 
     func orientationDidChange() async {
