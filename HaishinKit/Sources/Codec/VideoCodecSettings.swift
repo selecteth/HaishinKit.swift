@@ -157,10 +157,7 @@ public struct VideoCodecSettings: Codable, Sendable {
         if bitRate != rhs.bitRate {
             logger.info("bitRate change from ", rhs.bitRate, " to ", bitRate)
             let option = VTSessionOption(key: bitRateMode.key, value: NSNumber(value: bitRate))
-            if let status = codec.session?.setOption(option), status != noErr {
-                // ToDo
-                // codec.delegate?.videoCodec(codec, errorOccurred: .failedToSetOption(status: status, option: option))
-            }
+            _ = codec.session?.setOption(option)
         }
         if frameInterval != rhs.frameInterval {
             codec.frameInterval = frameInterval
