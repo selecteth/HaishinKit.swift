@@ -72,10 +72,8 @@ public final actor MediaMixer {
         videoIO.inputFormats
     }
 
-    /// The frame rate of a device capture.
-    public var frameRate: Float64 {
-        videoIO.frameRate
-    }
+    /// The output frame rate.
+    public private(set) var frameRate = MediaMixer.defaultFrameRate
 
     /// The capture session is in a running state or not.
     @available(tvOS 17.0, *)
@@ -160,9 +158,13 @@ public final actor MediaMixer {
     ///
     @available(tvOS 17.0, *)
     public func attachVideo(_ device: AVCaptureDevice?, track: UInt8 = 0, configuration: VideoDeviceConfigurationBlock? = nil) async throws {
+        let frameRate = self.frameRate
         return try await withCheckedThrowingContinuation { continuation in
             do {
-                try videoIO.attachVideo(track, device: device, configuration: configuration)
+                try videoIO.attachVideo(track, device: device) { video in
+                    try? video.setFrameRate(frameRate)
+                    try configuration?(video)
+                }
                 continuation.resume()
             } catch {
                 continuation.resume(throwing: Error.failedToAttach(error))
@@ -184,7 +186,7 @@ public final actor MediaMixer {
     ///
     /// - Attention: You can perform multi-microphone capture by specifying as follows on macOS. Unfortunately, it seems that only one microphone is available on iOS.
     ///
-    /// ```
+    /// ```swift
     /// let mixer = MediaMixer(multiCamSessionEnabled: false, multiTrackAudioMixingEnabled: true)
     ///
     /// var audios = AVCaptureDevice.devices(for: .audio)
@@ -266,11 +268,22 @@ public final actor MediaMixer {
         }
     }
 
-    /// Sets the frame rate of a device capture.
-    public func setFrameRate(_ frameRate: Float64) {
-        videoIO.frameRate = frameRate
-        Task { @ScreenActor in
-            displayLink.preferredFramesPerSecond = Int(frameRate)
+    /// Sets the output frame rate of the mixer.
+    ///
+    /// This is distinct from the camera capture rate, which can be configured separately as shown below.
+    /// ```swift
+    /// try? await mixer.configuration(video: 0) { video in
+    ///     try? video.setFrameRate(fps)
+    /// }
+    /// ```
+    public func setFrameRate(_ frameRate: Float64) throws {
+        switch videoMixerSettings.mode {
+        case .passthrough:
+            try videoIO.devices.first?.value.setFrameRate(frameRate)
+        case .offscreen:
+            Task { @ScreenActor in
+                displayLink.preferredFramesPerSecond = Int(frameRate)
+            }
         }
     }
 
@@ -380,7 +393,7 @@ public final actor MediaMixer {
             guard let device = error.device, let format = device.videoFormat(
                 width: session.sessionPreset.width ?? Int32.max,
                 height: session.sessionPreset.height ?? Int32.max,
-                frameRate: videoIO.frameRate,
+                frameRate: frameRate,
                 isMultiCamSupported: session.isMultiCamSessionEnabled
             ), device.activeFormat != format else {
                 return
@@ -388,9 +401,9 @@ public final actor MediaMixer {
             do {
                 try device.lockForConfiguration()
                 device.activeFormat = format
-                if format.isFrameRateSupported(videoIO.frameRate) {
-                    device.activeVideoMinFrameDuration = CMTime(value: 100, timescale: CMTimeScale(100 * videoIO.frameRate))
-                    device.activeVideoMaxFrameDuration = CMTime(value: 100, timescale: CMTimeScale(100 * videoIO.frameRate))
+                if format.isFrameRateSupported(frameRate) {
+                    device.activeVideoMinFrameDuration = CMTime(value: 100, timescale: CMTimeScale(100 * frameRate))
+                    device.activeVideoMaxFrameDuration = CMTime(value: 100, timescale: CMTimeScale(100 * frameRate))
                 }
                 device.unlockForConfiguration()
                 session.startRunningIfNeeded()
