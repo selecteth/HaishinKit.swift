@@ -106,8 +106,8 @@ public struct VideoCodecSettings: Codable, Sendable {
     public var allowFrameReordering: Bool? // swiftlint:disable:this discouraged_optional_boolean
     /// Specifies the dataRateLimits
     public var dataRateLimits: [Double]?
-    /// Specifies the HardwareEncoder is enabled(TRUE), or not(FALSE) for macOS.
-    public var isHardwareEncoderEnabled: Bool
+    /// Specifies the hardware accelerated encoder is enabled(TRUE), or not(FALSE) for macOS.
+    public var isHardwareAcceleratedEnabled: Bool
     /// Specifies the video frame interval.
     public var frameInterval: Double = 0.0
 
@@ -125,7 +125,7 @@ public struct VideoCodecSettings: Codable, Sendable {
         allowFrameReordering: Bool? = nil,
         // swiftlint:enable discouraged_optional_boolean
         dataRateLimits: [Double]? = [0.0, 0.0],
-        isHardwareEncoderEnabled: Bool = true
+        isHardwareAcceleratedEnabled: Bool = true
     ) {
         self.videoSize = videoSize
         self.bitRate = bitRate
@@ -135,7 +135,7 @@ public struct VideoCodecSettings: Codable, Sendable {
         self.maxKeyFrameIntervalDuration = maxKeyFrameIntervalDuration
         self.allowFrameReordering = allowFrameReordering
         self.dataRateLimits = dataRateLimits
-        self.isHardwareEncoderEnabled = isHardwareEncoderEnabled
+        self.isHardwareAcceleratedEnabled = isHardwareAcceleratedEnabled
         if profileLevel.contains("HEVC") {
             self.format = .hevc
         }
@@ -149,7 +149,7 @@ public struct VideoCodecSettings: Codable, Sendable {
                     bitRateMode == rhs.bitRateMode &&
                     profileLevel == rhs.profileLevel &&
                     dataRateLimits == rhs.dataRateLimits &&
-                    isHardwareEncoderEnabled == rhs.isHardwareEncoderEnabled
+                    isHardwareAcceleratedEnabled == rhs.isHardwareAcceleratedEnabled
         )
     }
 
@@ -188,7 +188,7 @@ public struct VideoCodecSettings: Codable, Sendable {
             }
         }
         #if os(macOS)
-        if isHardwareEncoderEnabled {
+        if isHardwareAcceleratedEnabled {
             options.insert(.init(key: .encoderID, value: format.encoderID))
             options.insert(.init(key: .enableHardwareAcceleratedVideoEncoder, value: kCFBooleanTrue))
             options.insert(.init(key: .requireHardwareAcceleratedVideoEncoder, value: kCFBooleanTrue))
