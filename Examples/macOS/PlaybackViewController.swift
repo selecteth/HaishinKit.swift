@@ -24,7 +24,8 @@ final class PlaybackViewController: NSViewController {
         Task { @MainActor in
             if button.title == "Playback" {
                 button.title = "Close"
-                try? await session?.connect(.playback)
+                try? await session?.connect(.playback) {
+                }
             } else {
                 button.title = "Playback"
                 try? await session?.close()

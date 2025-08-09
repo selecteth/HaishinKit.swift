@@ -5,10 +5,25 @@ public enum SessionMethod {
     case playback
 }
 
+/// Represents the current connection state of a session.
+public enum SessionReadyState: Int, Sendable {
+    /// The session is currently attempting to establish a connection.
+    case connecting
+    /// The session has been successfully established and is ready for communication.
+    case open
+    /// The session is in the process of closing the connection.
+    case closing
+    /// The session has been closed or could not be established.
+    case closed
+}
+
 /// A type that represents a foundation of streaming session.
 ///
 /// Streaming with RTMPConneciton is difficult to use because it requires many idioms.
 public protocol Session: NetworkConnection {
+    /// The current ready state.
+    var readyState: AsyncStream<SessionReadyState> { get }
+
     /// The stream instance.
     var stream: any StreamConvertible { get }
 
@@ -19,5 +34,5 @@ public protocol Session: NetworkConnection {
     func setMaxRetryCount(_ maxRetryCount: Int)
 
     /// Creates a connection to the server.
-    func connect(_ method: SessionMethod) async throws
+    func connect(_ method: SessionMethod, disconnected: @Sendable @escaping () -> Void) async throws
 }

@@ -3,31 +3,29 @@ import HaishinKit
 import SwiftUI
 
 actor PlaybackViewModel: ObservableObject {
-    enum State {
-        case closed
-        case connecting
-        case connected
-    }
-
-    @MainActor
-    private var view: PiPHKView?
-    @MainActor
-    private var pictureInPictureController: AVPictureInPictureController?
-
-    @MainActor
-    @Published
-    private(set) var state: State = .closed
+    @MainActor private var view: PiPHKView?
+    @MainActor private var pictureInPictureController: AVPictureInPictureController?
+    @MainActor @Published private(set) var readyState: SessionReadyState = .closed
+    @MainActor @Published private(set) var error: Error?
+    @MainActor @Published var isShowError = false
     private var session: (any Session)?
     private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
 
-    func start() async throws {
+    func start() async {
+        guard let session else {
+            return
+        }
         do {
-            Task { @MainActor in state = .connecting }
-            try await session?.connect(.playback)
-            Task { @MainActor in state = .connected }
+            try await session.connect(.playback) {
+                Task { @MainActor in
+                    self.isShowError = true
+                }
+            }
         } catch {
-            Task { @MainActor in state = .closed }
-            throw error
+            Task { @MainActor in
+                self.error = error
+                self.isShowError = true
+            }
         }
     }
 
@@ -50,6 +48,17 @@ actor PlaybackViewModel: ObservableObject {
                 await session.stream.addOutput(view)
             }
             await session.stream.attachAudioPlayer(audioPlayer)
+            Task { @MainActor in
+                for await readyState in await session.readyState {
+                    self.readyState = readyState
+                    switch readyState {
+                    case .open:
+                        UIApplication.shared.isIdleTimerDisabled = false
+                    default:
+                        UIApplication.shared.isIdleTimerDisabled = true
+                    }
+                }
+            }
         } catch {
             logger.error(error)
         }

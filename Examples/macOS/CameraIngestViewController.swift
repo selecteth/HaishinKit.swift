@@ -103,7 +103,8 @@ final class CameraIngestViewController: NSViewController {
             // Publish
             if sender.title == "Publish" {
                 sender.title = "Stop"
-                try? await session?.connect(.ingest)
+                try? await session?.connect(.ingest) {
+                }
             } else {
                 // Stop
                 sender.title = "Publish"

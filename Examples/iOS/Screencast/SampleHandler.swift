@@ -64,7 +64,8 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
                 await mixer.setVideoMixerSettings(videoSetting)
                 if let session {
                     await mixer.addOutput(session.stream)
-                    try? await session.connect(.ingest)
+                    try? await session.connect(.ingest) {
+                    }
                 }
             } catch {
                 logger.error(error)
