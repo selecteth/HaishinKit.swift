@@ -2,14 +2,16 @@
 import HaishinKit
 import SwiftUI
 
-actor PlaybackViewModel: ObservableObject {
-    @MainActor private var view: PiPHKView?
-    @MainActor private var pictureInPictureController: AVPictureInPictureController?
-    @MainActor @Published private(set) var readyState: SessionReadyState = .closed
-    @MainActor @Published private(set) var error: Error?
-    @MainActor @Published var isShowError = false
+@MainActor
+final class PlaybackViewModel: ObservableObject {
+    @Published private(set) var readyState: SessionReadyState = .closed
+    @Published private(set) var error: Error?
+    @Published var isShowError = false
+
+    private var view: PiPHKView?
     private var session: (any Session)?
     private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
+    private var pictureInPictureController: AVPictureInPictureController?
 
     func start() async {
         guard let session else {
@@ -22,10 +24,8 @@ actor PlaybackViewModel: ObservableObject {
                 }
             }
         } catch {
-            Task { @MainActor in
-                self.error = error
-                self.isShowError = true
-            }
+            self.error = error
+            self.isShowError = true
         }
     }
 
@@ -44,11 +44,11 @@ actor PlaybackViewModel: ObservableObject {
             guard let session else {
                 return
             }
-            if let view = await view {
+            if let view {
                 await session.stream.addOutput(view)
             }
             await session.stream.attachAudioPlayer(audioPlayer)
-            Task { @MainActor in
+            Task {
                 for await readyState in await session.readyState {
                     self.readyState = readyState
                     switch readyState {
@@ -67,7 +67,7 @@ actor PlaybackViewModel: ObservableObject {
 
 extension PlaybackViewModel: PiPHKSwiftUiView.PreviewSource {
     // MARK: PiPHKSwiftUiView.PreviewSource
-    func connect(to view: HaishinKit.PiPHKView) async {
+    nonisolated func connect(to view: HaishinKit.PiPHKView) {
         Task { @MainActor in
             self.view = view
             if pictureInPictureController == nil {

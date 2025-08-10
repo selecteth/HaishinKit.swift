@@ -3,8 +3,8 @@ import HaishinKit
 import SwiftUI
 
 struct PiPHKSwiftUiView: UIViewRepresentable {
-    protocol PreviewSource: Actor {
-        func connect(to view: PiPHKView) async
+    protocol PreviewSource {
+        func connect(to view: PiPHKView)
     }
 
     typealias UIViewType = HaishinKit.PiPHKView
@@ -16,13 +16,11 @@ struct PiPHKSwiftUiView: UIViewRepresentable {
         self.previewSource = previewSource
     }
 
-    func makeUIView(context: Context) -> HaishinKit.PiPHKView {
-        Task {
-            await previewSource.connect(to: view)
-        }
+    func makeUIView(context: Context) -> PiPHKView {
+        previewSource.connect(to: view)
         return view
     }
 
-    func updateUIView(_ uiView: HaishinKit.PiPHKView, context: Context) {
+    func updateUIView(_ uiView: PiPHKView, context: Context) {
     }
 }
