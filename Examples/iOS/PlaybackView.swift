@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct PlaybackView: View {
-    @State var error: Error?
-    @State var isShowError = false
     @StateObject private var model = PlaybackViewModel()
 
     var body: some View {
@@ -14,10 +12,10 @@ struct PlaybackView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    switch model.state {
+                    switch model.readyState {
                     case .connecting:
                         Spacer()
-                    case .connected:
+                    case .open:
                         Button(action: {
                             Task {
                                 await model.stop()
@@ -34,12 +32,7 @@ struct PlaybackView: View {
                     case .closed:
                         Button(action: {
                             Task {
-                                do {
-                                    try await model.start()
-                                } catch {
-                                    self.error = error
-                                    isShowError = true
-                                }
+                                await model.start()
                             }
                         }, label: {
                             Image(systemName: "play.circle")
@@ -50,21 +43,22 @@ struct PlaybackView: View {
                         .background(Color.blue)
                         .cornerRadius(30.0)
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 16.0, trailing: 16.0))
+                    case .closing:
+                        Spacer()
                     }
                 }
             }
-
-            if model.state == .connecting {
+            if model.readyState == .connecting {
                 VStack {
                     ProgressView()
                 }
             }
         }.task {
             await model.makeSession()
-        }.alert(isPresented: $isShowError) {
+        }.alert(isPresented: $model.isShowError) {
             Alert(
                 title: Text("Error"),
-                message: Text(error?.localizedDescription ?? ""),
+                message: Text(model.error?.localizedDescription ?? ""),
                 dismissButton: .default(Text("OK"))
             )
         }

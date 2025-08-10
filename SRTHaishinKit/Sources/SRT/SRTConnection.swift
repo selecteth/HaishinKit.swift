@@ -98,6 +98,7 @@ public actor SRTConnection: NetworkConnection {
                         connected = await socket?.status == .connected
                         continuation.resume()
                     } catch {
+                        socket = SRTSocket()
                         continuation.resume(throwing: error)
                     }
                 }
@@ -155,6 +156,7 @@ public actor SRTConnection: NetworkConnection {
             for await data in await socket.inputs {
                 await streams.first?.doInput(data)
             }
+            await close()
         }
     }
 

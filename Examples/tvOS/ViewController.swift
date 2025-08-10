@@ -32,7 +32,6 @@ final class ViewController: UIViewController {
             var videoMixerSettings = await mixer.videoMixerSettings
             videoMixerSettings.mode = .offscreen
             await mixer.setVideoMixerSettings(videoMixerSettings)
-
             do {
                 session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
                 guard let session else {

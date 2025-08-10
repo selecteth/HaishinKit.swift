@@ -65,6 +65,7 @@ final actor SRTSocket {
                     if 0 <= result {
                         continuation.yield(await self.incomingBuffer.subdata(in: 0..<Data.Index(result)))
                     } else {
+                        await self.stopRunning()
                         continuation.finish()
                     }
                 }

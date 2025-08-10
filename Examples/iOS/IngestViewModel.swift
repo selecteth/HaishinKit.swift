@@ -19,7 +19,8 @@ actor IngestViewModel: ObservableObject {
 
     func startIngest() async {
         do {
-            try await session?.connect(.ingest)
+            try await session?.connect(.ingest) {
+            }
             Task { @MainActor in
                 UIApplication.shared.isIdleTimerDisabled = true
                 isIngesting = true
