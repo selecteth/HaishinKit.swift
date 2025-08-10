@@ -38,8 +38,8 @@ enum VideoEffectItem: String, CaseIterable, Identifiable, Sendable {
 }
 
 struct IngestView: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @StateObject var model = IngestViewModel()
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @StateObject private var model = IngestViewModel()
 
     var body: some View {
         ZStack {
@@ -77,7 +77,7 @@ struct IngestView: View {
                     }
                 }
                 .onChange(of: model.currentFPS) { tag in
-                    Task { await model.setFrameRate(tag.frameRate) }
+                    model.setFrameRate(tag.frameRate)
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 150)
@@ -95,24 +95,43 @@ struct IngestView: View {
                 .frame(height: 120)
                 .padding(.bottom, 32)
                 .onChange(of: model.visualEffectItem) { tag in
-                    Task { await model.setVisualEffet(tag) }
+                    model.setVisualEffet(tag)
                 }
             }
             VStack {
                 Spacer()
                 HStack {
                     Spacer()
-                    Button(action: {
-                        print("Tapped!!")
-                    }, label: {
-                        Image(systemName: "record.circle")
-                            .foregroundColor(.white)
-                            .font(.system(size: 24))
-                    })
-                    .frame(width: 60, height: 60)
-                    .background(Color.blue)
-                    .cornerRadius(30.0)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 16.0, trailing: 16.0))
+                    switch model.readyState {
+                    case .connecting:
+                        Spacer()
+                    case .open:
+                        Button(action: {
+                            model.stopIngest()
+                        }, label: {
+                            Image(systemName: "stop.circle")
+                                .foregroundColor(.white)
+                                .font(.system(size: 24))
+                        })
+                        .frame(width: 60, height: 60)
+                        .background(Color.blue)
+                        .cornerRadius(30.0)
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 16.0, trailing: 16.0))
+                    case .closing:
+                        Spacer()
+                    case .closed:
+                        Button(action: {
+                            model.startIngest()
+                        }, label: {
+                            Image(systemName: "record.circle")
+                                .foregroundColor(.white)
+                                .font(.system(size: 24))
+                        })
+                        .frame(width: 60, height: 60)
+                        .background(Color.blue)
+                        .cornerRadius(30.0)
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 16.0, trailing: 16.0))
+                    }
                 }
             }
         }
@@ -131,7 +150,13 @@ struct IngestView: View {
             Task { await model.stopRunning() }
         }
         .onChange(of: horizontalSizeClass) { _ in
-            Task { await model.orientationDidChange() }
+            model.orientationDidChange()
+        }.alert(isPresented: $model.isShowError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(model.error?.localizedDescription ?? ""),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 }

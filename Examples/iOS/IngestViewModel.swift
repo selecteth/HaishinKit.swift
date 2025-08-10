@@ -2,43 +2,51 @@ import AVFoundation
 import HaishinKit
 import SwiftUI
 
-actor IngestViewModel: ObservableObject {
-    @MainActor @Published var currentFPS: FPS = .fps30
-    @MainActor @Published var visualEffectItem: VideoEffectItem = .none
-    @MainActor @Published private(set) var isTorchEnabled = false
-    @MainActor @Published private(set) var isIngesting = false
+@MainActor
+final class IngestViewModel: ObservableObject {
+    @Published var currentFPS: FPS = .fps30
+    @Published var visualEffectItem: VideoEffectItem = .none
+    @Published private(set) var error: Error?
+    @Published var isShowError = false
+    @Published private(set) var isTorchEnabled = false
+    @Published private(set) var readyState: SessionReadyState = .closed
     // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
     // let mixer = MediaMixer(multiCamSessionEnabled: true)
     private(set) var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false)
     private var session: (any Session)?
     private var currentPosition: AVCaptureDevice.Position = .back
-    @ScreenActor
-    private var videoScreenObject = VideoTrackScreenObject()
-    @ScreenActor
-    private var currentVideoEffect: VideoEffect?
+    @ScreenActor private var videoScreenObject: VideoTrackScreenObject?
+    @ScreenActor private var currentVideoEffect: VideoEffect?
 
-    func startIngest() async {
-        do {
-            try await session?.connect(.ingest) {
-            }
-            Task { @MainActor in
-                UIApplication.shared.isIdleTimerDisabled = true
-                isIngesting = true
-            }
-        } catch {
-            logger.error(error)
+    init() {
+        Task { @ScreenActor in
+            videoScreenObject = VideoTrackScreenObject()
         }
     }
 
-    func stopIngest() async {
-        do {
-            Task { @MainActor in
-                UIApplication.shared.isIdleTimerDisabled = false
-                isIngesting = false
+    func startIngest() {
+        Task {
+            do {
+                try await session?.connect(.ingest) {
+                    Task { @MainActor in
+                        self.isShowError = true
+                    }
+                }
+            } catch {
+                self.error = error
+                self.isShowError = true
+                logger.error(error)
             }
-            try await session?.close()
-        } catch {
-            logger.error(error)
+        }
+    }
+
+    func stopIngest() {
+        Task {
+            do {
+                try await session?.close()
+            } catch {
+                logger.error(error)
+            }
         }
     }
 
@@ -61,14 +69,29 @@ actor IngestViewModel: ObservableObject {
         // Make session.
         do {
             session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
-            if let session {
-                await mixer.addOutput(session.stream)
+            guard let session else {
+                return
+            }
+            await mixer.addOutput(session.stream)
+            Task {
+                for await readyState in await session.readyState {
+                    self.readyState = readyState
+                    switch readyState {
+                    case .open:
+                        UIApplication.shared.isIdleTimerDisabled = false
+                    default:
+                        UIApplication.shared.isIdleTimerDisabled = true
+                    }
+                }
             }
         } catch {
             logger.error(error)
         }
 
         Task { @ScreenActor in
+            guard let videoScreenObject else {
+                return
+            }
             videoScreenObject.cornerRadius = 16.0
             videoScreenObject.track = 1
             videoScreenObject.horizontalAlignment = .right
@@ -97,13 +120,13 @@ actor IngestViewModel: ObservableObject {
                 videoMixerSettings.mainTrack = 1
                 await mixer.setVideoMixerSettings(videoMixerSettings)
                 Task { @ScreenActor in
-                    videoScreenObject.track = 0
+                    videoScreenObject?.track = 0
                 }
             } else {
                 videoMixerSettings.mainTrack = 0
                 await mixer.setVideoMixerSettings(videoMixerSettings)
                 Task { @ScreenActor in
-                    videoScreenObject.track = 1
+                    videoScreenObject?.track = 1
                 }
             }
         } else {
@@ -115,7 +138,7 @@ actor IngestViewModel: ObservableObject {
         }
     }
 
-    func setVisualEffet(_ videoEffect: VideoEffectItem) async {
+    func setVisualEffet(_ videoEffect: VideoEffectItem) {
         Task { @ScreenActor in
             if let currentVideoEffect {
                 _ = await mixer.screen.unregisterVideoEffect(currentVideoEffect)
@@ -129,40 +152,40 @@ actor IngestViewModel: ObservableObject {
 
     func toggleTorch() async {
         await mixer.setTorchEnabled(!isTorchEnabled)
-        Task { @MainActor in
-            isTorchEnabled.toggle()
+        isTorchEnabled.toggle()
+    }
+
+    func setFrameRate(_ fps: Float64) {
+        Task {
+            do {
+                // Sets to input frameRate.
+                try? await mixer.configuration(video: 0) { video in
+                    do {
+                        try video.setFrameRate(fps)
+                    } catch {
+                        logger.error(error)
+                    }
+                }
+                try? await mixer.configuration(video: 1) { video in
+                    do {
+                        try video.setFrameRate(fps)
+                    } catch {
+                        logger.error(error)
+                    }
+                }
+                // Sets to output frameRate.
+                try await mixer.setFrameRate(fps)
+            } catch {
+                logger.error(error)
+            }
         }
     }
 
-    func setFrameRate(_ fps: Float64) async {
-        do {
-            // Sets to input frameRate.
-            try? await mixer.configuration(video: 0) { video in
-                do {
-                    try video.setFrameRate(fps)
-                } catch {
-                    logger.error(error)
-                }
-            }
-            try? await mixer.configuration(video: 1) { video in
-                do {
-                    try video.setFrameRate(fps)
-                } catch {
-                    logger.error(error)
-                }
-            }
-            // Sets to output frameRate.
-            try await mixer.setFrameRate(fps)
-        } catch {
-            logger.error(error)
-        }
-    }
-
-    func orientationDidChange() async {
-        if let orientation = await DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
-            await mixer.setVideoOrientation(orientation)
-        }
+    func orientationDidChange() {
         Task { @ScreenActor in
+            if let orientation = await DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
+                await mixer.setVideoOrientation(orientation)
+            }
             if await UIDevice.current.orientation.isLandscape {
                 await mixer.screen.size = .init(width: 1280, height: 720)
             } else {
@@ -173,7 +196,9 @@ actor IngestViewModel: ObservableObject {
 }
 
 extension IngestViewModel: MTHKSwiftUiView.PreviewSource {
-    func connect(to view: HaishinKit.MTHKView) async {
-        await mixer.addOutput(view)
+    nonisolated func connect(to view: HaishinKit.MTHKView) {
+        Task {
+            await mixer.addOutput(view)
+        }
     }
 }

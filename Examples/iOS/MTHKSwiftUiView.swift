@@ -3,26 +3,24 @@ import HaishinKit
 import SwiftUI
 
 struct MTHKSwiftUiView: UIViewRepresentable {
-    protocol PreviewSource: Actor {
-        func connect(to view: MTHKView) async
+    protocol PreviewSource {
+        func connect(to view: MTHKView)
     }
 
-    typealias UIViewType = HaishinKit.MTHKView
+    typealias UIViewType = MTHKView
 
     let previewSource: PreviewSource
-    private var view = HaishinKit.MTHKView(frame: .zero)
+    private var view = MTHKView(frame: .zero)
 
     init(previewSource: PreviewSource) {
         self.previewSource = previewSource
     }
 
-    func makeUIView(context: Context) -> HaishinKit.MTHKView {
-        Task {
-            await previewSource.connect(to: view)
-        }
+    func makeUIView(context: Context) -> MTHKView {
+        previewSource.connect(to: view)
         return view
     }
 
-    func updateUIView(_ uiView: HaishinKit.MTHKView, context: Context) {
+    func updateUIView(_ uiView: MTHKView, context: Context) {
     }
 }
