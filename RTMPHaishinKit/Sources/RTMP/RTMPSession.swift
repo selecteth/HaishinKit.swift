@@ -17,7 +17,7 @@ actor RTMPSession: Session {
 
     private let uri: RTMPURL
     private var retryCount: Int = 0
-    private var maxRetryCount: Int = 5
+    private var maxRetryCount: Int = kSession_maxRetryCount
     private lazy var connection = RTMPConnection()
     private lazy var _stream: RTMPStream = {
         RTMPStream(connection: connection)
@@ -86,6 +86,7 @@ actor RTMPSession: Session {
         _readyState.value = .closing
         disconnctedTask = nil
         try await connection.close()
+        retryCount = 0
         _readyState.value = .closed
     }
 }

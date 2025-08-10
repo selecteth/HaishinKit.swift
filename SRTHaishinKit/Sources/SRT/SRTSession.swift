@@ -18,7 +18,7 @@ actor SRTSession: Session {
 
     private let uri: URL
     private var retryCount: Int = 0
-    private var maxRetryCount: Int = 0
+    private var maxRetryCount = kSession_maxRetryCount
     private lazy var connection = SRTConnection()
     private lazy var _stream: SRTStream = {
         SRTStream(connection: connection)
@@ -80,6 +80,7 @@ actor SRTSession: Session {
         }
         _readyState.value = .closing
         await connection.close()
+        retryCount = 0
         _readyState.value = .closed
     }
 }
