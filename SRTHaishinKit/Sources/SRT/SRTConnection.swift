@@ -4,6 +4,7 @@ import HaishinKit
 import libsrt
 
 /// An actor that provides the interface to control a SRT connection.
+///
 /// Supports a one-to-one connection. Multiple connections cannot be established.
 public actor SRTConnection: NetworkConnection {
     /// The error domain codes.
@@ -12,17 +13,17 @@ public actor SRTConnection: NetworkConnection {
         case invalidState
         /// The uri isn’t supported.
         case unsupportedUri(_ uri: URL?)
-        /// The fail to connect.
-        case failedToConnect(_ message: String, reson: Int32)
+        /// The failed to connect.
+        case failedToConnect(_ reason: SRTRejectReason)
     }
 
-    /// The SRT Library version
+    /// The SRT Library version.
     public static let version: String = SRT_VERSION_STRING
-    /// The URI passed to the SRTConnection.connect() method.
+    /// The URI passed to the `connect()` method.
     public private(set) var uri: URL?
     /// This instance connect to server(true) or not(false)
     @Published public private(set) var connected = false
-    /// The SRT's performance data.
+    /// The performance data.
     public var performanceData: SRTPerformanceData? {
         get async {
             return await socket?.performanceData
@@ -116,8 +117,15 @@ public actor SRTConnection: NetworkConnection {
                     }
                 }
             }
+        } catch let error as SRTSocket.Error {
+            switch error {
+            case .rejected(let reason):
+                throw Error.failedToConnect(reason)
+            default:
+                throw Error.invalidState
+            }
         } catch {
-            throw error
+            throw Error.invalidState
         }
     }
 

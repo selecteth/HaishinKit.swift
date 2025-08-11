@@ -17,7 +17,7 @@ actor RTMPSession: Session {
 
     private let uri: RTMPURL
     private var retryCount: Int = 0
-    private var maxRetryCount: Int = kSession_maxRetryCount
+    private var maxRetryCount = kSession_maxRetryCount
     private lazy var connection = RTMPConnection()
     private lazy var _stream: RTMPStream = {
         RTMPStream(connection: connection)
