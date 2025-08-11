@@ -457,7 +457,7 @@ public actor RTMPStream {
     ///
     /// - Parameters:
     ///   - handlerName: The message to send.
-    ///   - arguemnts: Optional arguments.
+    ///   - arguments: Optional arguments.
     ///   - isResetTimestamp: A workaround option for sending timestamps as 0 in some services.
     public func send(_ handlerName: String, arguments: (any Sendable)?..., isResetTimestamp: Bool = false) throws {
         guard readyState == .publishing else {
