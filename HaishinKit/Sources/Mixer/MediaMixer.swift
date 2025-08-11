@@ -279,7 +279,9 @@ public final actor MediaMixer {
     public func setFrameRate(_ frameRate: Float64) throws {
         switch videoMixerSettings.mode {
         case .passthrough:
-            try videoIO.devices.first?.value.setFrameRate(frameRate)
+            if #available(tvOS 17.0, *) {
+                try videoIO.devices.first?.value.setFrameRate(frameRate)
+            }
         case .offscreen:
             Task { @ScreenActor in
                 displayLink.preferredFramesPerSecond = Int(frameRate)

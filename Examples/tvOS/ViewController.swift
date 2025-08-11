@@ -66,7 +66,8 @@ final class ViewController: UIViewController {
             present(picker, animated: true)
         case .playback:
             Task {
-                try? await session?.connect(.playback)
+                try? await session?.connect(.playback) {
+                }
             }
         }
     }
