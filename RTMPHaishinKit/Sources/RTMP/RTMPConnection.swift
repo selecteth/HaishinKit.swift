@@ -12,7 +12,7 @@ public actor RTMPConnection: HaishinKit.NetworkConnection {
         case invalidState
         /// The command isn’t supported.
         case unsupportedCommand(_ command: String)
-        /// The connected operation timed out.
+        /// The connection operation timed out.
         case connectionTimedOut
         /// The general socket error.
         case socketErrorOccurred(_ error: (any Swift.Error)?)

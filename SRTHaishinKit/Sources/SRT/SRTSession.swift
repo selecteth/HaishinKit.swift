@@ -46,6 +46,20 @@ actor SRTSession: Session {
         do {
             try await connection.connect(uri)
         } catch {
+            if let error = error as? SRTConnection.Error {
+                switch error {
+                case .failedToConnect(let reason):
+                    // If the timeout has expired, there is no prospect of successfully reconnecting
+                    // even if a retry is attempted, so no retry will be performed.
+                    guard reason == .timeout else {
+                        retryCount = 0
+                        _readyState.value = .closed
+                        throw error
+                    }
+                default:
+                    break
+                }
+            }
             guard retryCount < maxRetryCount else {
                 retryCount = 0
                 _readyState.value = .closed

@@ -4,7 +4,10 @@ import Foundation
 ///
 /// ## Prerequisites
 /// You need to register the factory in advance as follows.
-/// ```
+/// ```swift
+/// import RTMPHaishinKit
+/// import SRTHaishinKit
+///
 /// await SessionBuilderFactory.shared.register(RTMPSessionFactory())
 /// await SessionBuilderFactory.shared.register(SRTSessionFactory())
 /// ```
