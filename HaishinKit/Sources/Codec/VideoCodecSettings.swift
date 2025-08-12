@@ -16,24 +16,19 @@ public struct VideoCodecSettings: Codable, Sendable {
     public static let `default` = VideoCodecSettings()
 
     /// A bitRate mode that affectes how to encode the video source.
-    public enum BitRateMode: String, Codable, Sendable {
+    public struct BitRateMode: Sendable, Codable, Equatable {
+        public static func == (lhs: VideoCodecSettings.BitRateMode, rhs: VideoCodecSettings.BitRateMode) -> Bool {
+            lhs.key == rhs.key
+        }
+
         /// The average bit rate.
-        case average
+        public static let average = BitRateMode(key: .averageBitRate)
+
         /// The constant bit rate.
         @available(iOS 16.0, tvOS 16.0, macOS 13.0, *)
-        case constant
+        public static let constant = BitRateMode(key: .constantBitRate)
 
-        var key: VTSessionOptionKey {
-            if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
-                switch self {
-                case .average:
-                    return .averageBitRate
-                case .constant:
-                    return .constantBitRate
-                }
-            }
-            return .averageBitRate
-        }
+        let key: VTSessionOptionKey
     }
 
     /**
