@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct PreferenceView: View {
-    @State private var url: String = ""
-    @State private var streamName: String = ""
+    @EnvironmentObject var model: PreferenceViewModel
 
     var body: some View {
         Form {
@@ -11,22 +10,28 @@ struct PreferenceView: View {
                     Text("URL")
                         .frame(width: 80, alignment: .leading)
                         .foregroundColor(.secondary)
-                    TextField(Preference.default.uri, text: $url)
-                        .onSubmit {
-                            Preference.default.uri = url
-                        }
+                    TextField(Preference.default.uri, text: $model.uri)
                 }.padding(.vertical, 4)
                 HStack {
                     Text("Name")
                         .frame(width: 80, alignment: .leading)
                         .foregroundColor(.secondary)
-                    TextField(Preference.default.streamName, text: $streamName)
-                        .onSubmit {
-                            Preference.default.streamName = streamName
-                        }
+                    TextField(Preference.default.streamName, text: $model.streamName)
                 }.padding(.vertical, 4)
             } header: {
                 Text("Stream")
+            }
+            Section {
+                Toggle(isOn: $model.isLowLatencyRateControlEnabled) {
+                    Text("LowLatency")
+                }
+                Picker("BitRateMode", selection: $model.bitRateMode) {
+                    ForEach(model.bitRateModes, id: \.description) { index in
+                        Text(index.description).tag(index)
+                    }
+                }
+            } header: {
+                Text("Video Settings")
             }
         }
     }

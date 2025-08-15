@@ -16,7 +16,7 @@ public struct VideoCodecSettings: Codable, Sendable {
     public static let `default` = VideoCodecSettings()
 
     /// A bitRate mode that affectes how to encode the video source.
-    public struct BitRateMode: Sendable, Codable, Equatable {
+    public struct BitRateMode: Sendable, CustomStringConvertible, Codable, Hashable, Equatable {
         public static func == (lhs: VideoCodecSettings.BitRateMode, rhs: VideoCodecSettings.BitRateMode) -> Bool {
             lhs.key == rhs.key
         }
@@ -29,6 +29,14 @@ public struct VideoCodecSettings: Codable, Sendable {
         public static let constant = BitRateMode(key: .constantBitRate)
 
         let key: VTSessionOptionKey
+
+        public var description: String {
+            key.CFString as String
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            return hasher.combine(description)
+        }
     }
 
     /**
@@ -101,6 +109,8 @@ public struct VideoCodecSettings: Codable, Sendable {
     public var allowFrameReordering: Bool? // swiftlint:disable:this discouraged_optional_boolean
     /// Specifies the dataRateLimits
     public var dataRateLimits: [Double]?
+    /// Specifies the low-latency opretaion for an encoder.
+    public var isLowLatencyRateControlEnabled: Bool
     /// Specifies the hardware accelerated encoder is enabled(TRUE), or not(FALSE) for macOS.
     public var isHardwareAcceleratedEnabled: Bool
     /// Specifies the video frame interval.
@@ -120,6 +130,7 @@ public struct VideoCodecSettings: Codable, Sendable {
         allowFrameReordering: Bool? = nil,
         // swiftlint:enable discouraged_optional_boolean
         dataRateLimits: [Double]? = [0.0, 0.0],
+        isLowLatencyRateControlEnabled: Bool = false,
         isHardwareAcceleratedEnabled: Bool = true
     ) {
         self.videoSize = videoSize
@@ -130,6 +141,7 @@ public struct VideoCodecSettings: Codable, Sendable {
         self.maxKeyFrameIntervalDuration = maxKeyFrameIntervalDuration
         self.allowFrameReordering = allowFrameReordering
         self.dataRateLimits = dataRateLimits
+        self.isLowLatencyRateControlEnabled = isLowLatencyRateControlEnabled
         self.isHardwareAcceleratedEnabled = isHardwareAcceleratedEnabled
         if profileLevel.contains("HEVC") {
             self.format = .hevc
@@ -144,6 +156,7 @@ public struct VideoCodecSettings: Codable, Sendable {
                     bitRateMode == rhs.bitRateMode &&
                     profileLevel == rhs.profileLevel &&
                     dataRateLimits == rhs.dataRateLimits &&
+                    isLowLatencyRateControlEnabled == rhs.isLowLatencyRateControlEnabled &&
                     isHardwareAcceleratedEnabled == rhs.isHardwareAcceleratedEnabled
         )
     }
@@ -193,5 +206,12 @@ public struct VideoCodecSettings: Codable, Sendable {
             options.insert(.init(key: .H264EntropyMode, value: kVTH264EntropyMode_CABAC))
         }
         return options
+    }
+
+    func makeEncoderSpecification() -> CFDictionary? {
+        if isLowLatencyRateControlEnabled, #available(iOS 14.5, macCatalyst 14.5, macOS 11.3, tvOS 14.5, visionOS 1.0, *) {
+            return [kVTVideoEncoderSpecification_EnableLowLatencyRateControl: true as CFBoolean] as CFDictionary
+        }
+        return nil
     }
 }

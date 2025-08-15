@@ -6,9 +6,12 @@ import SwiftUI
 
 @main
 struct HaishinApp: App {
+    @State private var preference = PreferenceViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(preference)
         }
     }
 
