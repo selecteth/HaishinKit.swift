@@ -11,7 +11,7 @@ struct PreferenceView: View {
                     Text("URL")
                         .frame(width: 80, alignment: .leading)
                         .foregroundColor(.secondary)
-                    TextField(Preference.default.uri ?? "", text: $url)
+                    TextField(Preference.default.uri, text: $url)
                         .onSubmit {
                             Preference.default.uri = url
                         }
@@ -20,7 +20,7 @@ struct PreferenceView: View {
                     Text("Name")
                         .frame(width: 80, alignment: .leading)
                         .foregroundColor(.secondary)
-                    TextField(Preference.default.streamName ?? "", text: $streamName)
+                    TextField(Preference.default.streamName, text: $streamName)
                         .onSubmit {
                             Preference.default.streamName = streamName
                         }

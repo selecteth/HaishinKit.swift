@@ -64,7 +64,7 @@ final class IngestViewModel: ObservableObject {
         try? await mixer.attachVideo(front, track: 1) { videoUnit in
             videoUnit.isVideoMirrored = true
         }
-        await orientationDidChange()
+        orientationDidChange()
         await mixer.startRunning()
         // Make session.
         do {
