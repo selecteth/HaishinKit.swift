@@ -24,10 +24,14 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func startIngest() {
+    func startIngest(_ preference: PreferenceViewModel) {
         Task {
+            guard let session else {
+                return
+            }
             do {
-                try await session?.connect(.ingest) {
+                try await session.stream.setVideoSettings(preference.makeVideoCodecSettings(session.stream.videoSettings))
+                try await session.connect(.ingest) {
                     Task { @MainActor in
                         self.isShowError = true
                     }
@@ -50,25 +54,10 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func startRunning() async {
-        // SetUp a mixer.
-        await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-        var videoMixerSettings = await mixer.videoMixerSettings
-        videoMixerSettings.mode = .offscreen
-        await mixer.setVideoMixerSettings(videoMixerSettings)
-        // Attach devices
-        let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: currentPosition)
-        try? await mixer.attachVideo(back, track: 0)
-        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        try? await mixer.attachVideo(front, track: 1) { videoUnit in
-            videoUnit.isVideoMirrored = true
-        }
-        orientationDidChange()
-        await mixer.startRunning()
+    func makeSession(_ preference: PreferenceViewModel) async {
         // Make session.
         do {
-            session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+            session = try await SessionBuilderFactory.shared.make(preference.makeURL()).build()
             guard let session else {
                 return
             }
@@ -87,7 +76,24 @@ final class IngestViewModel: ObservableObject {
         } catch {
             logger.error(error)
         }
+    }
 
+    func startRunning() async {
+        // SetUp a mixer.
+        await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+        var videoMixerSettings = await mixer.videoMixerSettings
+        videoMixerSettings.mode = .offscreen
+        await mixer.setVideoMixerSettings(videoMixerSettings)
+        // Attach devices
+        let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: currentPosition)
+        try? await mixer.attachVideo(back, track: 0)
+        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        try? await mixer.attachVideo(front, track: 1) { videoUnit in
+            videoUnit.isVideoMirrored = true
+        }
+        orientationDidChange()
+        await mixer.startRunning()
         Task { @ScreenActor in
             guard let videoScreenObject else {
                 return
@@ -113,28 +119,30 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func flipCamera() async {
-        if await mixer.isMultiCamSessionEnabled {
-            var videoMixerSettings = await mixer.videoMixerSettings
-            if videoMixerSettings.mainTrack == 0 {
-                videoMixerSettings.mainTrack = 1
-                await mixer.setVideoMixerSettings(videoMixerSettings)
-                Task { @ScreenActor in
-                    videoScreenObject?.track = 0
+    func flipCamera() {
+        Task {
+            if await mixer.isMultiCamSessionEnabled {
+                var videoMixerSettings = await mixer.videoMixerSettings
+                if videoMixerSettings.mainTrack == 0 {
+                    videoMixerSettings.mainTrack = 1
+                    await mixer.setVideoMixerSettings(videoMixerSettings)
+                    Task { @ScreenActor in
+                        videoScreenObject?.track = 0
+                    }
+                } else {
+                    videoMixerSettings.mainTrack = 0
+                    await mixer.setVideoMixerSettings(videoMixerSettings)
+                    Task { @ScreenActor in
+                        videoScreenObject?.track = 1
+                    }
                 }
             } else {
-                videoMixerSettings.mainTrack = 0
-                await mixer.setVideoMixerSettings(videoMixerSettings)
-                Task { @ScreenActor in
-                    videoScreenObject?.track = 1
+                let position: AVCaptureDevice.Position = currentPosition == .back ? .front : .back
+                try? await mixer.attachVideo(AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)) { videoUnit in
+                    videoUnit.isVideoMirrored = position == .front
                 }
+                currentPosition = position
             }
-        } else {
-            let position: AVCaptureDevice.Position = currentPosition == .back ? .front : .back
-            try? await mixer.attachVideo(AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)) { videoUnit in
-                videoUnit.isVideoMirrored = position == .front
-            }
-            currentPosition = position
         }
     }
 
@@ -150,9 +158,11 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func toggleTorch() async {
-        await mixer.setTorchEnabled(!isTorchEnabled)
-        isTorchEnabled.toggle()
+    func toggleTorch() {
+        Task {
+            await mixer.setTorchEnabled(!isTorchEnabled)
+            isTorchEnabled.toggle()
+        }
     }
 
     func setFrameRate(_ fps: Float64) {

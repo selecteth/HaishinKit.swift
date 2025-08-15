@@ -39,6 +39,7 @@ enum VideoEffectItem: String, CaseIterable, Identifiable, Sendable {
 
 struct IngestView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @EnvironmentObject var preference: PreferenceViewModel
     @StateObject private var model = IngestViewModel()
 
     var body: some View {
@@ -50,7 +51,7 @@ struct IngestView: View {
                 HStack(spacing: 16) {
                     Spacer()
                     Button(action: { Task {
-                        await model.flipCamera()
+                        model.flipCamera()
                     }}, label: {
                         Image(systemName:
                                 "arrow.trianglehead.2.clockwise.rotate.90.camera")
@@ -60,7 +61,7 @@ struct IngestView: View {
                             .frame(width: 30, height: 30)
                     })
                     Button(action: { Task {
-                        await model.toggleTorch()
+                        model.toggleTorch()
                     }}, label: {
                         Image(systemName: model.isTorchEnabled ?
                                 "flashlight.on.circle.fill" :
@@ -121,7 +122,7 @@ struct IngestView: View {
                         Spacer()
                     case .closed:
                         Button(action: {
-                            model.startIngest()
+                            model.startIngest(preference)
                         }, label: {
                             Image(systemName: "record.circle")
                                 .foregroundColor(.white)
@@ -145,6 +146,7 @@ struct IngestView: View {
                 logger.error(error)
             }
             await model.startRunning()
+            await model.makeSession(preference)
         }
         .onDisappear {
             Task { await model.stopRunning() }

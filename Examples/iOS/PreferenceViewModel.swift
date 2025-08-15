@@ -24,4 +24,11 @@ final class PreferenceViewModel: ObservableObject {
         newSettings.isLowLatencyRateControlEnabled = isLowLatencyRateControlEnabled
         return newSettings
     }
+
+    func makeURL() -> URL? {
+        if uri.contains("rtmp://") {
+            return URL(string: uri + "/" + streamName)
+        }
+        return URL(string: uri)
+    }
 }
