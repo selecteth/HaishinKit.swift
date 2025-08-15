@@ -43,7 +43,7 @@ Project name    |Notes       |License
 - [x] SharedObject
 - [x] RTMPS
   - [x] Native (RTMP over SSL/TLS)
-- [x] [Enhanced RTMP](HaishinKit/Sources/Docs.docc/E-RTMP.md)
+- [x] [Enhanced RTMP](RTMPHaishinKit/Sources/Docs.docc/E-RTMP.md)
 
 ### ✏️ [SRT](SRTHaishinKit/Sources/Docs.docc/index.md)
 - Ingest
@@ -118,8 +118,7 @@ open Examples/Examples.xcodeproj
 ### Development
 |Version|Xcode|Swift|
 |:----:|:----:|:----:|
-|2.0.0+|16.0+|5.10+|
-|1.9.0+|15.4+|5.10+|
+|2.1.0+|16.4+|6.1+|
 
 ### OS
 |-|iOS|tvOS|macOS|visionOS|watchOS|
