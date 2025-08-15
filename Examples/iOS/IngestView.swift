@@ -49,6 +49,16 @@ struct IngestView: View {
             }
             VStack(alignment: .trailing) {
                 HStack(spacing: 16) {
+                    if !model.audioSources.isEmpty {
+                        Picker("AudioSource", selection: $model.audioSource) {
+                            ForEach(model.audioSources, id: \.description) { source in
+                                Text(source.description).tag(source)
+                            }
+                        }
+                        .background(Color.black.opacity(0.2))
+                        .cornerRadius(16)
+                        .padding(16)
+                    }
                     Spacer()
                     Button(action: { Task {
                         model.flipCamera()
@@ -137,14 +147,6 @@ struct IngestView: View {
             }
         }
         .onAppear {
-            let session = AVAudioSession.sharedInstance()
-            do {
-                // If you set the "mode" parameter, stereo capture is not possible, so it is left unspecified.
-                try session.setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetooth])
-                try session.setActive(true)
-            } catch {
-                logger.error(error)
-            }
             model.startRunning(preference)
         }
         .onDisappear {
