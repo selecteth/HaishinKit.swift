@@ -33,7 +33,7 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
         }
     }
     private var session: Session?
-    private var mixer = MediaMixer(multiCamSessionEnabled: false, multiTrackAudioMixingEnabled: true)
+    private var mixer = MediaMixer(captureSessionMode: .manual, multiTrackAudioMixingEnabled: true)
     private var needVideoConfiguration = true
 
     override init() {

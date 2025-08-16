@@ -17,9 +17,37 @@ public final actor MediaMixer {
         case deviceNotFound
     }
 
+    /// An enumeration defines the capture session mode used for video/audio input.
+    public enum CaptureSessionMode: Sendable {
+        /// Uses a standard `AVCaptureSession`
+        case single
+        /// Uses an `AVCaptureMultiCamSession`
+        case multi
+        /// Does not use a `AVCaptureSession`. Set this when using ReplayKit, as AVCaptureSession is not required.
+        case manual
+
+        func makeSession() -> (any CaptureSessionConvertible) {
+            switch self {
+            case .single:
+                var session = CaptureSession()
+                session.isMultiCamSessionEnabled = false
+                return session
+            case .multi:
+                var session = CaptureSession()
+                session.isMultiCamSessionEnabled = true
+                return session
+            case .manual:
+                return NullCaptureSession()
+            }
+        }
+    }
+
     /// The offscreen rendering object.
     @ScreenActor
     public private(set) lazy var screen = Screen()
+
+    /// The capture session mode.
+    public let captureSessionMode: CaptureSessionMode
 
     #if os(iOS) || os(tvOS)
     /// The AVCaptureMultiCamSession enabled.
@@ -99,49 +127,20 @@ public final actor MediaMixer {
     private var cancellables: Set<AnyCancellable> = []
     private lazy var audioIO = AudioCaptureUnit(session)
     private lazy var videoIO = VideoCaptureUnit(session)
-    private lazy var session = CaptureSession()
+    private lazy var session: (any CaptureSessionConvertible) = captureSessionMode.makeSession()
     @ScreenActor
     private lazy var displayLink = DisplayLinkChoreographer()
 
-    #if os(iOS) || os(tvOS)
     /// Creates a new instance.
     ///
     /// - Parameters:
-    ///   - multiCamSessionEnabled: Specifies the AVCaptureMultiCamSession enabled.
+    ///   - captureSessionMode: Specifies the capture session mode.
     ///   - multiTrackAudioMixingEnabled: Specifies the feature to mix multiple audio tracks. For example, it is possible to mix .appAudio and .micAudio from ReplayKit.
     public init(
-        multiCamSessionEnabled: Bool = true,
+        captureSessionMode: CaptureSessionMode = .single,
         multiTrackAudioMixingEnabled: Bool = false
     ) {
-        Task {
-            await _init(
-                multiCamSessionEnabled: multiCamSessionEnabled,
-                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled
-            )
-        }
-    }
-
-    private func _init(
-        multiCamSessionEnabled: Bool,
-        multiTrackAudioMixingEnabled: Bool
-    ) async {
-        session.isMultiCamSessionEnabled = multiCamSessionEnabled
-        audioIO.isMultiTrackAudioMixingEnabled = multiTrackAudioMixingEnabled
-    }
-
-    #else
-    /// Creates a new instance.
-    ///
-    /// - Parameters:
-    ///   - multiTrackAudioMixingEnabled: Specifies the feature to mix multiple audio tracks. For example, it is possible to mix .appAudio and .micAudio from ReplayKit.
-    public init(
-        multiTrackAudioMixingEnabled: Bool = false,
-        ) {
-        Task {
-            await _init(
-                multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled
-            )
-        }
+        self.captureSessionMode = captureSessionMode
     }
 
     private func _init(
@@ -149,7 +148,6 @@ public final actor MediaMixer {
     ) async {
         audioIO.isMultiTrackAudioMixingEnabled = multiTrackAudioMixingEnabled
     }
-    #endif
 
     /// Attaches a video device.
     ///

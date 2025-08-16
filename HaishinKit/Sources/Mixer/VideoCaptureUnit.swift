@@ -81,9 +81,9 @@ final class VideoCaptureUnit: CaptureUnit {
     var devices: [UInt8: VideoDeviceUnit] = [:]
     #endif
 
-    private let session: CaptureSession
+    private let session: (any CaptureSessionConvertible)
 
-    init(_ session: CaptureSession) {
+    init(_ session: (some CaptureSessionConvertible)) {
         self.session = session
     }
 

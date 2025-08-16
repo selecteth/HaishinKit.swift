@@ -121,7 +121,7 @@ public final class VideoDeviceUnit: DeviceUnit {
         self.frameRate = frameRate
     }
 
-    func attachDevice(_ device: AVCaptureDevice?, session: CaptureSession, videoUnit: VideoCaptureUnit) throws {
+    func attachDevice(_ device: AVCaptureDevice?, session: some CaptureSessionConvertible, videoUnit: VideoCaptureUnit) throws {
         setSampleBufferDelegate(nil)
         session.detachCapture(self)
         guard let device else {
