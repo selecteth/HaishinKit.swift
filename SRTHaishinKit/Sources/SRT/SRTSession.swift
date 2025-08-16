@@ -17,6 +17,7 @@ actor SRTSession: Session {
     }
 
     private let uri: URL
+    private let method: SessionMethod
     private var retryCount: Int = 0
     private var maxRetryCount = kSession_maxRetryCount
     private lazy var connection = SRTConnection()
@@ -30,15 +31,16 @@ actor SRTSession: Session {
         }
     }
 
-    init(uri: URL) {
+    init(uri: URL, method: SessionMethod) {
         self.uri = uri
+        self.method = method
     }
 
     func setMaxRetryCount(_ maxRetryCount: Int) {
         self.maxRetryCount = maxRetryCount
     }
 
-    func connect(_ method: SessionMethod, disconnected: @Sendable @escaping () -> Void) async throws {
+    func connect(_ disconnected: @Sendable @escaping () -> Void) async throws {
         guard await connection.connected == false else {
             return
         }
@@ -68,7 +70,7 @@ actor SRTSession: Session {
             // It is being delayed using backoff for congestion control.
             try await Task.sleep(nanoseconds: UInt64(pow(2.0, Double(retryCount))) * 1_000_000_000)
             retryCount += 1
-            try await connect(method, disconnected: disconnected)
+            try await connect(disconnected)
         }
         _readyState.value = .open
         retryCount = 0

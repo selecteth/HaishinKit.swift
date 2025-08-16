@@ -18,7 +18,7 @@ final class PlaybackViewModel: ObservableObject {
             return
         }
         do {
-            try await session.connect(.playback) {
+            try await session.connect {
                 Task { @MainActor in
                     self.isShowError = true
                 }
@@ -39,7 +39,7 @@ final class PlaybackViewModel: ObservableObject {
 
     func makeSession() async {
         do {
-            session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+            session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).setMethod(.playback).build()
             await session?.setMaxRetryCount(0)
             guard let session else {
                 return
