@@ -1,6 +1,28 @@
 import AVFoundation
 
-final class CaptureSession {
+protocol CaptureSessionConvertible: Runner {
+    #if !os(visionOS)
+    @available(tvOS 17.0, *)
+    var sessionPreset: AVCaptureSession.Preset { get set }
+    #endif
+
+    var isInturreped: AsyncStream<Bool> { get }
+    var runtimeError: AsyncStream<AVError> { get }
+    var isMultiCamSessionEnabled: Bool { get set }
+    @available(tvOS 17.0, *)
+    var isMultitaskingCameraAccessEnabled: Bool { get }
+
+    @available(tvOS 17.0, *)
+    func attachCapture(_ capture: (any DeviceUnit)?)
+    @available(tvOS 17.0, *)
+    func detachCapture(_ capture: (any DeviceUnit)?)
+    @available(tvOS 17.0, *)
+    func configuration(_ lambda: (_ session: AVCaptureSession) throws -> Void ) rethrows
+    @available(tvOS 17.0, *)
+    func startRunningIfNeeded()
+}
+
+final class CaptureSession: CaptureSessionConvertible {
     #if os(iOS) || os(tvOS)
     static var isMultiCamSupported: Bool {
         if #available(tvOS 17.0, *) {
@@ -30,10 +52,10 @@ final class CaptureSession {
     }
 
     #elseif os(macOS)
-    let isMultiCamSessionEnabled = true
+    var isMultiCamSessionEnabled = true
     let isMultitaskingCameraAccessEnabled = true
     #elseif os(visionOS)
-    let isMultiCamSessionEnabled = false
+    var isMultiCamSessionEnabled = false
     let isMultitaskingCameraAccessEnabled = false
     #endif
 
@@ -291,5 +313,46 @@ extension CaptureSession: Runner {
         } else {
             isRunning = false
         }
+    }
+}
+
+final class NullCaptureSession: CaptureSessionConvertible {
+    private(set) var isRunning: Bool = false
+
+    #if !os(visionOS)
+    @available(tvOS 17.0, *)
+    var sessionPreset: AVCaptureSession.Preset {
+        get {
+            return .default
+        }
+        set {
+        }
+    }
+    #endif
+
+    @AsyncStreamed(false) var isInturreped: AsyncStream<Bool>
+    @AsyncStreamedFlow var runtimeError: AsyncStream<AVError>
+    var isMultiCamSessionEnabled: Bool = false
+    var isMultitaskingCameraAccessEnabled: Bool = false
+
+    @available(tvOS 17.0, *)
+    func attachCapture(_ capture: (any DeviceUnit)?) {
+    }
+
+    @available(tvOS 17.0, *)
+    func detachCapture(_ capture: (any DeviceUnit)?) {
+    }
+
+    @available(tvOS 17.0, *)
+    func configuration(_ lambda: (AVCaptureSession) throws -> Void) rethrows {
+    }
+
+    func startRunningIfNeeded() {
+    }
+
+    func startRunning() {
+    }
+
+    func stopRunning() {
     }
 }

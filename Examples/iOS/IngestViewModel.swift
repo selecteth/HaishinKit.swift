@@ -10,9 +10,9 @@ final class IngestViewModel: ObservableObject {
     @Published var isShowError = false
     @Published private(set) var isTorchEnabled = false
     @Published private(set) var readyState: SessionReadyState = .closed
-    // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
-    // let mixer = MediaMixer(multiCamSessionEnabled: true)
-    private(set) var mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false)
+    // If you want to use the multi-camera feature, please make create a MediaMixer with a capture mode.
+    // let mixer = MediaMixer(captureSesionMode: .multi)
+    private(set) var mixer = MediaMixer(captureSessionMode: .multi, multiTrackAudioMixingEnabled: false)
     private var session: (any Session)?
     private var currentPosition: AVCaptureDevice.Position = .back
     @ScreenActor private var videoScreenObject: VideoTrackScreenObject?
