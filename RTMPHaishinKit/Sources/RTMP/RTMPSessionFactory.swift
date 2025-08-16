@@ -7,7 +7,7 @@ public struct RTMPSessionFactory: SessionFactory {
     public init() {
     }
 
-    public func make(_ uri: URL) -> any Session {
-        return RTMPSession(uri: uri)
+    public func make(_ uri: URL, method: SessionMethod) -> any Session {
+        return RTMPSession(uri: uri, method: method)
     }
 }

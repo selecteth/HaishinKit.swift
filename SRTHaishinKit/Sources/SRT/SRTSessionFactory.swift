@@ -7,7 +7,7 @@ public struct SRTSessionFactory: SessionFactory {
     public init() {
     }
 
-    public func make(_ uri: URL) -> any Session {
-        return SRTSession(uri: uri)
+    public func make(_ uri: URL, method: SessionMethod) -> any Session {
+        return SRTSession(uri: uri, method: method)
     }
 }

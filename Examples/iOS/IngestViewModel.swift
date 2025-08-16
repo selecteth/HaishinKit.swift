@@ -31,7 +31,7 @@ final class IngestViewModel: ObservableObject {
             }
             do {
                 try await session.stream.setVideoSettings(preference.makeVideoCodecSettings(session.stream.videoSettings))
-                try await session.connect(.ingest) {
+                try await session.connect {
                     Task { @MainActor in
                         self.isShowError = true
                     }

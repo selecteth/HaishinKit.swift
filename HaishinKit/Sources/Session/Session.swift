@@ -2,7 +2,7 @@ import Foundation
 
 package let kSession_maxRetryCount: Int = 3
 
-public enum SessionMethod {
+public enum SessionMethod: Sendable {
     case ingest
     case playback
 }
@@ -32,11 +32,11 @@ public protocol Session: NetworkConnection {
     var stream: any StreamConvertible { get }
 
     /// Creates a new session with uri.
-    init(uri: URL)
+    init(uri: URL, method: SessionMethod)
 
     /// Sets a max retry count.
     func setMaxRetryCount(_ maxRetryCount: Int)
 
     /// Creates a connection to the server.
-    func connect(_ method: SessionMethod, disconnected: @Sendable @escaping () -> Void) async throws
+    func connect(_ disconnected: @Sendable @escaping () -> Void) async throws
 }
