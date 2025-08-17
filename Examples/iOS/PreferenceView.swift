@@ -33,6 +33,17 @@ struct PreferenceView: View {
             } header: {
                 Text("Video Settings")
             }
+            Section {
+                Button(action: {
+                    model.showIngestSheet.toggle()
+                }, label: {
+                    Text("Memory release test for IngestView")
+                }).sheet(isPresented: $model.showIngestSheet, content: {
+                    IngestView()
+                })
+            } header: {
+                Text("Test Case")
+            }
         }
     }
 }

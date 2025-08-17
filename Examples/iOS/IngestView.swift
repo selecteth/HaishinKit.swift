@@ -136,7 +136,7 @@ struct IngestView: View {
                 }
             }
         }
-        .task {
+        .onAppear {
             let session = AVAudioSession.sharedInstance()
             do {
                 // If you set the "mode" parameter, stereo capture is not possible, so it is left unspecified.
@@ -145,11 +145,10 @@ struct IngestView: View {
             } catch {
                 logger.error(error)
             }
-            await model.startRunning()
-            await model.makeSession(preference)
+            model.startRunning(preference)
         }
         .onDisappear {
-            Task { await model.stopRunning() }
+            model.stopRunning()
         }
         .onChange(of: horizontalSizeClass) { _ in
             model.orientationDidChange()

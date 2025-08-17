@@ -12,7 +12,8 @@ final class IngestViewModel: ObservableObject {
     @Published private(set) var readyState: SessionReadyState = .closed
     // If you want to use the multi-camera feature, please make create a MediaMixer with a capture mode.
     // let mixer = MediaMixer(captureSesionMode: .multi)
-    private(set) var mixer = MediaMixer(captureSessionMode: .multi, multiTrackAudioMixingEnabled: false)
+    private(set) var mixer = MediaMixer(captureSessionMode: .multi)
+    private var tasks: [Task<Void, Swift.Error>] = []
     private var session: (any Session)?
     private var currentPosition: AVCaptureDevice.Position = .back
     @ScreenActor private var videoScreenObject: VideoTrackScreenObject?
@@ -57,12 +58,14 @@ final class IngestViewModel: ObservableObject {
     func makeSession(_ preference: PreferenceViewModel) async {
         // Make session.
         do {
-            session = try await SessionBuilderFactory.shared.make(preference.makeURL()).build()
+            session = try await SessionBuilderFactory.shared.make(preference.makeURL())
+                .setMethod(.ingest)
+                .build()
             guard let session else {
                 return
             }
             await mixer.addOutput(session.stream)
-            Task {
+            tasks.append(Task {
                 for await readyState in await session.readyState {
                     self.readyState = readyState
                     switch readyState {
@@ -72,28 +75,31 @@ final class IngestViewModel: ObservableObject {
                         UIApplication.shared.isIdleTimerDisabled = true
                     }
                 }
-            }
+            })
         } catch {
             logger.error(error)
         }
     }
 
-    func startRunning() async {
-        // SetUp a mixer.
-        await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-        var videoMixerSettings = await mixer.videoMixerSettings
-        videoMixerSettings.mode = .offscreen
-        await mixer.setVideoMixerSettings(videoMixerSettings)
-        // Attach devices
-        let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: currentPosition)
-        try? await mixer.attachVideo(back, track: 0)
-        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        try? await mixer.attachVideo(front, track: 1) { videoUnit in
-            videoUnit.isVideoMirrored = true
+    func startRunning(_ preference: PreferenceViewModel) {
+        Task {
+            // SetUp a mixer.
+            await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+            var videoMixerSettings = await mixer.videoMixerSettings
+            videoMixerSettings.mode = .offscreen
+            await mixer.setVideoMixerSettings(videoMixerSettings)
+            // Attach devices
+            let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: currentPosition)
+            try? await mixer.attachVideo(back, track: 0)
+            try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+            let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+            try? await mixer.attachVideo(front, track: 1) { videoUnit in
+                videoUnit.isVideoMirrored = true
+            }
+            await mixer.startRunning()
+            await makeSession(preference)
         }
         orientationDidChange()
-        await mixer.startRunning()
         Task { @ScreenActor in
             guard let videoScreenObject else {
                 return
@@ -109,13 +115,17 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func stopRunning() async {
-        await mixer.stopRunning()
-        try? await mixer.attachAudio(nil)
-        try? await mixer.attachVideo(nil, track: 0)
-        try? await mixer.attachVideo(nil, track: 1)
-        if let session {
-            await mixer.removeOutput(session.stream)
+    func stopRunning() {
+        Task {
+            await mixer.stopRunning()
+            try? await mixer.attachAudio(nil)
+            try? await mixer.attachVideo(nil, track: 0)
+            try? await mixer.attachVideo(nil, track: 1)
+            if let session {
+                await mixer.removeOutput(session.stream)
+            }
+            tasks.forEach { $0.cancel() }
+            tasks.removeAll()
         }
     }
 
