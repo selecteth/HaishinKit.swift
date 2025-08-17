@@ -10,7 +10,10 @@ final class PreferenceViewModel: ObservableObject {
 
     private(set) var bitRateModes: [VideoCodecSettings.BitRateMode] = [.average]
 
-    // MARK: - VideoSettings.
+    // MARK: - AudioCodecSettings.
+    @Published var audioFormat: AudioCodecSettings.Format = .aac
+
+    // MARK: - VideoCodecSettings.
     @Published var bitRateMode: VideoCodecSettings.BitRateMode = .average
     var isLowLatencyRateControlEnabled: Bool = false
 
@@ -24,6 +27,12 @@ final class PreferenceViewModel: ObservableObject {
         var newSettings = settings
         newSettings.bitRateMode = bitRateMode
         newSettings.isLowLatencyRateControlEnabled = isLowLatencyRateControlEnabled
+        return newSettings
+    }
+
+    func makeAudioCodecSettings(_ settings: AudioCodecSettings) -> AudioCodecSettings {
+        var newSettings = settings
+        newSettings.format = audioFormat
         return newSettings
     }
 

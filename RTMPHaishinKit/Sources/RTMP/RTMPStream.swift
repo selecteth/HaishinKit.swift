@@ -171,7 +171,7 @@ public actor RTMPStream {
     }
 
     static let defaultID: UInt32 = 0
-    static let supportedAudioCodecs: [AudioCodecSettings.Format] = AudioCodecSettings.Format.allCases
+    static let supportedAudioCodecs: [AudioCodecSettings.Format] = [.aac, .opus]
     static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
 
     /// The RTMPStream metadata.

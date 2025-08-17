@@ -1,3 +1,4 @@
+import HaishinKit
 import SwiftUI
 
 struct PreferenceView: View {
@@ -22,6 +23,15 @@ struct PreferenceView: View {
                 Text("Stream")
             }
             Section {
+                Picker("Format", selection: $model.audioFormat) {
+                    ForEach(AudioCodecSettings.Format.allCases, id: \.self) { format in
+                        Text("\(format)").tag(format)
+                    }
+                }
+            } header: {
+                Text("Audio Codec Settings")
+            }
+            Section {
                 Toggle(isOn: $model.isLowLatencyRateControlEnabled) {
                     Text("LowLatency")
                 }
@@ -31,7 +41,7 @@ struct PreferenceView: View {
                     }
                 }
             } header: {
-                Text("Video Settings")
+                Text("Video Codec Settings")
             }
             Section {
                 Button(action: {

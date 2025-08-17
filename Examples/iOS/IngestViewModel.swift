@@ -31,7 +31,6 @@ final class IngestViewModel: ObservableObject {
                 return
             }
             do {
-                try await session.stream.setVideoSettings(preference.makeVideoCodecSettings(session.stream.videoSettings))
                 try await session.connect {
                     Task { @MainActor in
                         self.isShowError = true
@@ -77,7 +76,24 @@ final class IngestViewModel: ObservableObject {
                 }
             })
         } catch {
-            logger.error(error)
+            self.error = error
+            isShowError = true
+        }
+        do {
+            if let session {
+                try await session.stream.setAudioSettings(preference.makeAudioCodecSettings(session.stream.audioSettings))
+            }
+        } catch {
+            self.error = error
+            isShowError = true
+        }
+        do {
+            if let session {
+                try await session.stream.setVideoSettings(preference.makeVideoCodecSettings(session.stream.videoSettings))
+            }
+        } catch {
+            self.error = error
+            isShowError = true
         }
     }
 
