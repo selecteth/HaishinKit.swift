@@ -29,11 +29,11 @@ public final actor MediaMixer {
         func makeSession() -> (any CaptureSessionConvertible) {
             switch self {
             case .single:
-                var session = CaptureSession()
+                let session = CaptureSession()
                 session.isMultiCamSessionEnabled = false
                 return session
             case .multi:
-                var session = CaptureSession()
+                let session = CaptureSession()
                 session.isMultiCamSessionEnabled = true
                 return session
             case .manual:
@@ -141,6 +141,9 @@ public final actor MediaMixer {
         multiTrackAudioMixingEnabled: Bool = false
     ) {
         self.captureSessionMode = captureSessionMode
+        Task {
+            await _init(multiTrackAudioMixingEnabled: multiTrackAudioMixingEnabled)
+        }
     }
 
     private func _init(
@@ -152,8 +155,9 @@ public final actor MediaMixer {
     /// Attaches a video device.
     ///
     /// If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode for iOS.
-    /// let mixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: false)
-    ///
+    /// ```swift
+    /// let mixer = MediaMixer(captureSessionMode: .multi)
+    /// ```
     @available(tvOS 17.0, *)
     public func attachVideo(_ device: AVCaptureDevice?, track: UInt8 = 0, configuration: VideoDeviceConfigurationBlock? = nil) async throws {
         let frameRate = self.frameRate
@@ -185,7 +189,7 @@ public final actor MediaMixer {
     /// - Attention: You can perform multi-microphone capture by specifying as follows on macOS. Unfortunately, it seems that only one microphone is available on iOS.
     ///
     /// ```swift
-    /// let mixer = MediaMixer(multiCamSessionEnabled: false, multiTrackAudioMixingEnabled: true)
+    /// let mixer = MediaMixer(multiTrackAudioMixingEnabled: true)
     ///
     /// var audios = AVCaptureDevice.devices(for: .audio)
     /// if let device = audios.removeFirst() {
