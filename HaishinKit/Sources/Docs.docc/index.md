@@ -5,9 +5,9 @@ This is the main module.
 This is the main module. It is mainly responsible for video and audio mixing, and provides a common interface.
 
 ## 🎨 Features
+### Session
 This is an API that consolidates the connection handling of RTMP and SRT into a unified interface. It encapsulates retry logic and best practices for establishing connections
-
-### Prerequisites
+#### Prerequisites
 ```swift
 import HaishinKit
 import RTMPHaishinKit
@@ -18,7 +18,7 @@ Task {
   await SessionBuilderFactory.shared.register(SRTSessionFactory())
 }
 ```
-### Make session
+#### Make session
 ```swift
 let session = try await SessionBuilderFactory.shared.make(URL(string: "rtmp://hostname/live/live"))
   .setMode(.ingest)
@@ -29,7 +29,7 @@ let session = try await SessionBuilderFactory.shared.make(URL(string: "srt://hos
   .setMode(.playback)
   .build()
 ```
-### Connect
+#### Connect
 Playback or ingest will be performed according to the selected mode setting.
 ```swift
 try session.connect {
