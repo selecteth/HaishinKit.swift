@@ -118,7 +118,7 @@ open Examples/Examples.xcodeproj
 ### Development
 |Version|Xcode|Swift|
 |:----:|:----:|:----:|
-|2.1.0+|16.4+|6.1+|
+|2.1.0+|16.4+|6.0+|
 
 ### OS
 |-|iOS|tvOS|macOS|visionOS|watchOS|
