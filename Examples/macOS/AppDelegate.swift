@@ -1,6 +1,7 @@
 import Cocoa
 import HaishinKit
-import Logboard
+@preconcurrency import Logboard
+import RTCHaishinKit
 import RTMPHaishinKit
 import SRTHaishinKit
 
@@ -14,6 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Task {
             await SessionBuilderFactory.shared.register(RTMPSessionFactory())
             await SessionBuilderFactory.shared.register(SRTSessionFactory())
+            await SessionBuilderFactory.shared.register(RTCSessionFactory())
         }
         LBLogger.with(kHaishinKitIdentifier).level = .info
     }

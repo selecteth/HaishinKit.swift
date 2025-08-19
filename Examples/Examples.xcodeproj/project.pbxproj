@@ -22,6 +22,8 @@
 		BC91298C2D12EB5E0077EFF3 /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9129382D12EA820077EFF3 /* Preference.swift */; };
 		BC912A812D12F10C0077EFF3 /* libc++.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC912A802D12F0900077EFF3 /* libc++.1.tbd */; };
 		BC912DDD2D185D360077EFF3 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC912DDC2D185D360077EFF3 /* MoQTHaishinKit */; };
+		BCABAD372E65D45A00B0E878 /* RTCHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCABAD362E65D45A00B0E878 /* RTCHaishinKit */; };
+		BCD2478C2E54C04E00C64280 /* RTCHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD2478B2E54C04E00C64280 /* RTCHaishinKit */; };
 		BCD5C7FA2E3F189700A69F16 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD5C7F92E3F189700A69F16 /* ReplayKit.framework */; };
 		BCD5C8012E3F189700A69F16 /* Screencast.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BCD5C7F82E3F189700A69F16 /* Screencast.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BCD5C8722E3F1D0B00A69F16 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD5C8712E3F1D0B00A69F16 /* HaishinKit */; };
@@ -182,6 +184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC47FA352CE61FCF002900AE /* MoQTHaishinKit in Frameworks */,
+				BCABAD372E65D45A00B0E878 /* RTCHaishinKit in Frameworks */,
 				BCEC2BBC2E104D8B00422F8F /* RTMPHaishinKit in Frameworks */,
 				BC33A11F2CDF52550016EEA0 /* SRTHaishinKit in Frameworks */,
 				BC33A11D2CDF52550016EEA0 /* HaishinKit in Frameworks */,
@@ -204,6 +207,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC6842B62E3D1294008FBFEE /* HaishinKit in Frameworks */,
+				BCD2478C2E54C04E00C64280 /* RTCHaishinKit in Frameworks */,
 				BC6842B82E3D1294008FBFEE /* MoQTHaishinKit in Frameworks */,
 				BC6842BC2E3D1294008FBFEE /* SRTHaishinKit in Frameworks */,
 				BC6842BA2E3D1294008FBFEE /* RTMPHaishinKit in Frameworks */,
@@ -356,6 +360,7 @@
 				BC6842B72E3D1294008FBFEE /* MoQTHaishinKit */,
 				BC6842B92E3D1294008FBFEE /* RTMPHaishinKit */,
 				BC6842BB2E3D1294008FBFEE /* SRTHaishinKit */,
+				BCD2478B2E54C04E00C64280 /* RTCHaishinKit */,
 			);
 			productName = "Example iOS";
 			productReference = BC6841622E3CFBE0008FBFEE /* Example iOS.app */;
@@ -1364,6 +1369,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BC9128822D12E7AD0077EFF3 /* XCLocalSwiftPackageReference "../../HaishinKit.swift" */;
 			productName = MoQTHaishinKit;
+		};
+		BCABAD362E65D45A00B0E878 /* RTCHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTCHaishinKit;
+		};
+		BCD2478B2E54C04E00C64280 /* RTCHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTCHaishinKit;
 		};
 		BCD5C8712E3F1D0B00A69F16 /* HaishinKit */ = {
 			isa = XCSwiftPackageProductDependency;

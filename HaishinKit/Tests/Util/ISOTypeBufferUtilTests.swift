@@ -1,7 +1,7 @@
 import Foundation
 import Testing
 
-@testable import SRTHaishinKit
+@testable import HaishinKit
 
 @Suite struct ISOTypeBufferUtilTests {
     @Test func toNALFileFormat_4() {
