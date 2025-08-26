@@ -10,12 +10,22 @@ final class IngestViewModel: ObservableObject {
     @Published var isShowError = false
     @Published private(set) var isTorchEnabled = false
     @Published private(set) var readyState: SessionReadyState = .closed
+    @Published var audioSource: AudioSource = .empty {
+        didSet {
+            guard audioSource != oldValue else {
+                return
+            }
+            selectAudioSource(audioSource)
+        }
+    }
+    @Published private(set) var audioSources: [AudioSource] = []
     // If you want to use the multi-camera feature, please make create a MediaMixer with a capture mode.
     // let mixer = MediaMixer(captureSesionMode: .multi)
     private(set) var mixer = MediaMixer(captureSessionMode: .multi)
     private var tasks: [Task<Void, Swift.Error>] = []
     private var session: (any Session)?
     private var currentPosition: AVCaptureDevice.Position = .back
+    private var audioSourceService = AudioSourceService()
     @ScreenActor private var videoScreenObject: VideoTrackScreenObject?
     @ScreenActor private var currentVideoEffect: VideoEffect?
 
@@ -99,6 +109,11 @@ final class IngestViewModel: ObservableObject {
 
     func startRunning(_ preference: PreferenceViewModel) {
         Task {
+            await audioSourceService.setUp()
+            await mixer.configuration { session in
+                // It is required for the stereo setting.
+                session.automaticallyConfiguresApplicationAudioSession = false
+            }
             // SetUp a mixer.
             await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
             var videoMixerSettings = await mixer.videoMixerSettings
@@ -107,7 +122,6 @@ final class IngestViewModel: ObservableObject {
             // Attach devices
             let back = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: currentPosition)
             try? await mixer.attachVideo(back, track: 0)
-            try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
             let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
             try? await mixer.attachVideo(front, track: 1) { videoUnit in
                 videoUnit.isVideoMirrored = true
@@ -128,6 +142,14 @@ final class IngestViewModel: ObservableObject {
             await mixer.screen.size = .init(width: 720, height: 1280)
             await mixer.screen.backgroundColor = UIColor.black.cgColor
             try? await mixer.screen.addChild(videoScreenObject)
+        }
+        Task {
+            for await sources in await audioSourceService.sourcesUpdates() {
+                audioSources = sources
+                if let first = sources.first, audioSource == .empty {
+                    audioSource = first
+                }
+            }
         }
     }
 
@@ -227,6 +249,15 @@ final class IngestViewModel: ObservableObject {
             } else {
                 await mixer.screen.size = .init(width: 720, height: 1280)
             }
+        }
+    }
+
+    private func selectAudioSource(_ audioSource: AudioSource) {
+        Task {
+            try await audioSourceService.selectAudioSource(audioSource)
+            await mixer.stopCapturing()
+            try await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+            await mixer.startCapturing()
         }
     }
 }
