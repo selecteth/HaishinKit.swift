@@ -95,6 +95,8 @@ final class CameraIngestViewController: NSViewController {
             if let device = videos.first {
                 try? await mixer.attachVideo(device, track: 1)
             }
+
+            await mixer.startRunning()
         }
     }
 

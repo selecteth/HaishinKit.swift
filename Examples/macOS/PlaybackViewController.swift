@@ -11,7 +11,9 @@ final class PlaybackViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Task { @MainActor in
-            session = try? await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
+            session = try? await SessionBuilderFactory.shared.make(Preference.default.makeURL())
+                .setMethod(.playback)
+                .build()
             guard let session else {
                 return
             }
