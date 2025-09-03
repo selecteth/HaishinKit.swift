@@ -20,7 +20,7 @@ struct HaishinApp: App {
         Task {
             await SessionBuilderFactory.shared.register(RTMPSessionFactory())
             await SessionBuilderFactory.shared.register(SRTSessionFactory())
-            await SessionBuilderFactory.shared.register(RTCSessionFactory())
+            await SessionBuilderFactory.shared.register(HTTPSessionFactory())
 
             await RTCLogger.shared.setLevel(.debug)
             LBLogger(kRTCHaishinKitIdentifier).level = .debug

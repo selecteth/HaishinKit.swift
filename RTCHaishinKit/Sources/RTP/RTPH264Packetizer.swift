@@ -1,3 +1,4 @@
+import AVFAudio
 import CoreMedia
 import Foundation
 import HaishinKit
@@ -6,7 +7,10 @@ private let RTPH264Packetizer_startCode = Data([0x00, 0x00, 0x00, 0x01])
 
 /// https://datatracker.ietf.org/doc/html/rfc3984
 final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
+    var ssrc: UInt32 = 12345679
+    var payloadType: UInt8 = 98
     weak var delegate: T?
+    private var sequenceNumber: UInt16 = 0
     private var buffer = Data()
     private var nalUnitReader = NALUnitReader()
     private var pictureParameterSets: Data?
@@ -17,6 +21,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     private var fragmentedBuffer = Data()
     private var fragmentedStarted = false
     private var fragmentedTimestamp: UInt32 = 0
+    private var timestamp: RTPTimestamp = .init(90000)
 
     private lazy var jitterBuffer: RTPJitterBuffer<RTPH264Packetizer> = {
         let jitterBuffer = RTPJitterBuffer<RTPH264Packetizer>()
@@ -26,6 +31,74 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
 
     func append(_ packet: RTPPacket) {
         jitterBuffer.append(packet)
+    }
+
+    func append(_ buffer: CMSampleBuffer, lambda: (RTPPacket) -> Void) {
+        let nals = nalUnitReader.read(buffer)
+        for i in 0..<nals.count {
+            let marker = i == nals.count - 1
+
+            if nals[i].count <= 1200 {
+                lambda(.init(
+                    version: RTPPacket.version,
+                    padding: false,
+                    extension: false,
+                    cc: 0,
+                    marker: marker,
+                    payloadType: payloadType,
+                    sequenceNumber: sequenceNumber,
+                    timestamp: timestamp.convert(buffer.presentationTimeStamp),
+                    ssrc: ssrc,
+                    payload: nals[i]
+                ))
+                sequenceNumber &+= 1
+            } else {
+                // split FragmentUnit A
+                let nalHeader = nals[i][0]
+                let fuIndicator = (nalHeader & 0xE0) | 28
+                let nalType = nalHeader & 0x1F
+
+                var offset = 1
+                var first = true
+                let length = nals[i].count
+
+                while offset < length {
+                    var fuHeader: UInt8 = nalType
+                    let fragmentSize = min(1200 - 2, length - offset)
+                    if first {
+                        fuHeader |= 0x80
+                    }
+                    if length <= offset + fragmentSize {
+                        fuHeader |= 0x40
+                    }
+                    var payload = Data()
+                    payload.append(fuIndicator)
+                    payload.append(fuHeader)
+                    payload.append(nals[i][offset..<offset + fragmentSize])
+
+                    lambda(RTPPacket(
+                        version: RTPPacket.version,
+                        padding: false,
+                        extension: false,
+                        cc: 0,
+                        marker: marker && (length <= offset + fragmentSize),
+                        payloadType: payloadType,
+                        sequenceNumber: sequenceNumber,
+                        timestamp: timestamp.convert(buffer.presentationTimeStamp),
+                        ssrc: ssrc,
+                        payload: payload
+                    ))
+                    sequenceNumber &+= 1
+
+                    offset += fragmentSize
+                    first = false
+                }
+            }
+        }
+    }
+
+    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) -> [RTPPacket] {
+        return []
     }
 
     private func decode(_ packet: RTPPacket) {
@@ -144,7 +217,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         guard formatDescription != nil else {
             return nil
         }
-        let presentationTimeStamp: CMTime = .init(value: CMTimeValue(timestamp), timescale: 90000)
+        let presentationTimeStamp = self.timestamp.convert(timestamp)
         let units = nalUnitReader.read(&buffer, type: H264NALUnit.self)
         var blockBuffer: CMBlockBuffer?
         ISOTypeBufferUtil.toNALFileFormat(&buffer)

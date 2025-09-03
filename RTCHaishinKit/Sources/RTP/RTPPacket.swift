@@ -2,6 +2,7 @@ import Foundation
 
 /// https://datatracker.ietf.org/doc/html/rfc3550
 struct RTPPacket: Sendable {
+    static let version: UInt8 = 2
     static let headerSize: Int = 12
 
     enum Error: Swift.Error {
@@ -21,6 +22,36 @@ struct RTPPacket: Sendable {
 }
 
 extension RTPPacket {
+    var data: Data {
+        var data = Data()
+        var first: UInt8 = (version & 0x03) << 6
+        first |= (padding ? 1 : 0) << 5
+        first |= (`extension` ? 1 : 0) << 4
+        first |= cc & 0x0F
+        data.append(first)
+        var second: UInt8 = (marker ? 1 : 0) << 7
+        second |= payloadType & 0x7F
+        data.append(second)
+        data.append(contentsOf: [
+            UInt8(sequenceNumber >> 8),
+            UInt8(sequenceNumber & 0xFF)
+        ])
+        data.append(contentsOf: [
+            UInt8(timestamp >> 24),
+            UInt8((timestamp >> 16) & 0xFF),
+            UInt8((timestamp >> 8) & 0xFF),
+            UInt8(timestamp & 0xFF)
+        ])
+        data.append(contentsOf: [
+            UInt8(ssrc >> 24),
+            UInt8((ssrc >> 16) & 0xFF),
+            UInt8((ssrc >> 8) & 0xFF),
+            UInt8(ssrc & 0xFF)
+        ])
+        data.append(payload)
+        return data
+    }
+
     init(_ data: Data) throws {
         guard RTPPacket.headerSize < data.count else {
             throw Error.bufferUnderrun

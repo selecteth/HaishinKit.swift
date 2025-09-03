@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Task {
             await SessionBuilderFactory.shared.register(RTMPSessionFactory())
             await SessionBuilderFactory.shared.register(SRTSessionFactory())
-            await SessionBuilderFactory.shared.register(RTCSessionFactory())
+            await SessionBuilderFactory.shared.register(HTTPSessionFactory())
         }
         LBLogger.with(kHaishinKitIdentifier).level = .info
     }

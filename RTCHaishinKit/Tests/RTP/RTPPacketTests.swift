@@ -15,6 +15,7 @@ import Testing
         #expect(packet.sequenceNumber == 519)
         #expect(packet.timestamp == 117000)
         #expect(packet.ssrc == 237828054)
+        #expect(packet.data == data)
     }
 
     @Test func testPacket2() throws {
@@ -24,5 +25,6 @@ import Testing
         #expect(packet.padding == false)
         #expect(packet.payloadType == 111)
         #expect(packet.sequenceNumber == 173)
+        #expect(packet.data == data)
     }
 }

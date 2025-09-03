@@ -6,6 +6,9 @@ import HaishinKit
 final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     weak var delegate: T?
 
+    var ssrc: UInt32 = 12345678
+    var payloadType: UInt8 = 111
+    private var sequenceNumber: UInt16 = 0
     private var formatDescription: CMAudioFormatDescription?
     private lazy var jitterBuffer: RTPJitterBuffer<RTPOpusPacketizer> = {
         let jitterBuffer = RTPJitterBuffer<RTPOpusPacketizer>()
@@ -15,6 +18,43 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
 
     func append(_ packet: RTPPacket) {
         jitterBuffer.append(packet)
+    }
+
+    func append(_ buffer: CMSampleBuffer, lambda: (RTPPacket) -> Void) {
+    }
+
+    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) -> [RTPPacket] {
+        let packet = RTPPacket(
+            version: RTPPacket.version,
+            padding: false,
+            extension: false,
+            cc: 0,
+            marker: true,
+            payloadType: payloadType,
+            sequenceNumber: sequenceNumber,
+            timestamp: timestamp,
+            ssrc: ssrc,
+            payload: Data(
+                bytes: buffer.data.assumingMemoryBound(to: UInt8.self),
+                count: Int(buffer.byteLength)
+            )
+        )
+        timestamp += 960
+        sequenceNumber &+= 1
+        return [packet]
+    }
+
+    var timestamp: UInt32 = 0
+    var baseRtpTimestamp: UInt32 = 0
+    var baseSampleTime: AVAudioFramePosition = -1
+    let sampleRate: Double = 48_000
+
+    private func timestamp(for audioTime: AVAudioTime) -> UInt32 {
+        if baseSampleTime == -1 {
+            baseSampleTime = audioTime.sampleTime
+        }
+        let delta = audioTime.sampleTime - baseSampleTime
+        return baseRtpTimestamp &+ UInt32(delta)
     }
 
     private func decode(_ packet: RTPPacket) {

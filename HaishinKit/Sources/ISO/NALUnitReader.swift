@@ -21,4 +21,40 @@ final package class NALUnitReader {
         }
         return units
     }
+
+    package func read(_ buffer: CMSampleBuffer) -> [Data] {
+        var offset = 0
+        let header = Int(Self.defaultNALUnitHeaderLength)
+        let length = buffer.dataBuffer?.dataLength ?? 0
+        var result: [Data] = []
+        
+        if !buffer.isNotSync {
+            result.append(Data([0x09, 0x10]))
+            buffer.formatDescription?.parameterSets.forEach {
+                result.append($0)
+            }
+        } else {
+            result.append(Data([0x09, 0x30]))
+        }
+        
+        try? buffer.dataBuffer?.withUnsafeMutableBytes { buffer in
+            guard let baseAddress = buffer.baseAddress else {
+                return
+            }
+            while offset + header < length {
+                var nalUnitLength: UInt32 = 0
+                memcpy(&nalUnitLength, baseAddress + offset, header)
+                nalUnitLength = CFSwapInt32BigToHost(nalUnitLength)
+                let start = offset + header
+                let end = start + Int(nalUnitLength)
+                if end <= length {
+                    result.append(Data(bytes: baseAddress + start, count: Int(nalUnitLength)))
+                } else {
+                    break
+                }
+                offset = end
+            }
+        }
+        return result
+    }
 }

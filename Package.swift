@@ -71,7 +71,8 @@ let package = Package(
         .target(
             name: "RTCHaishinKit",
             dependencies: ["libdatachannel", "HaishinKit"],
-            path: "RTCHaishinKit/Sources"
+            path: "RTCHaishinKit/Sources",
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "HaishinKitTests",

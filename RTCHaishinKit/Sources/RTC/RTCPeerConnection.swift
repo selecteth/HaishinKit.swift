@@ -2,6 +2,7 @@ import Foundation
 import libdatachannel
 
 protocol RTCPeerConnectionDelegate: AnyObject {
+    func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState)
     func peerConnection(_ peerConnection: RTCPeerConnection, didSet gatheringState: RTCGatheringState)
     func peerConnection(_ peerConnection: RTCPeerConnection, didReceive track: RTCTrack)
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCICECandidate)
@@ -12,7 +13,11 @@ final class RTCPeerConnection {
 
     weak var delegate: (any RTCPeerConnectionDelegate)?
     private let connection: Int32
-    private(set) var state: RTCState = .new
+    private(set) var state: RTCState = .new {
+        didSet {
+            delegate?.peerConnection(self, didSet: state)
+        }
+    }
     private(set) var tracks: [RTCTrack] = []
     private(set) var iceState: RTCICEState = .new
     private(set) var candidates: [RTCICECandidate] = []
@@ -102,19 +107,23 @@ final class RTCPeerConnection {
     }
 
     func createOffer() -> String {
-        let buffer = UnsafeMutablePointer<CChar>.allocate(capacity: Self.bufferSize)
-        rtcCreateOffer(connection, buffer, Int32(Self.bufferSize))
-        return String(cString: buffer)
+        return CUtil.getString { buffer, size in
+            rtcCreateOffer(connection, buffer, size)
+        }
     }
 
     func createAnswer() -> String {
-        let buffer = UnsafeMutablePointer<CChar>.allocate(capacity: Self.bufferSize)
-        rtcCreateAnswer(connection, buffer, Int32(Self.bufferSize))
-        return String(cString: buffer)
+        return CUtil.getString { buffer, size in
+            rtcCreateAnswer(connection, buffer, size)
+        }
     }
 
     func close() {
-        rtcClosePeerConnection(connection)
+        do {
+            try RTCError.check(rtcClosePeerConnection(connection))
+        } catch {
+            logger.warn(error)
+        }
     }
 
     private func didGenerateCandidate(_ candidated: RTCICECandidate) {

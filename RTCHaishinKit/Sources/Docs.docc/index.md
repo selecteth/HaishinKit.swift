@@ -11,3 +11,11 @@ RTCHaishinKit is WHIP/WHEP protocols stack in Swift. It internally uses a librar
 await RTCLogger.shared.setLevel(.debug)
 ```
 
+### Session
+Currently designed to work with the Session API.
+```swift
+import RTCHaishinKit
+
+await SessionBuilderFactory.shared.register(HTTPSessionFactory())
+```
+
