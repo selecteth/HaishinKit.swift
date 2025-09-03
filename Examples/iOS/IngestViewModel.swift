@@ -1,5 +1,6 @@
 import AVFoundation
 import HaishinKit
+import RTCHaishinKit
 import SwiftUI
 
 @MainActor

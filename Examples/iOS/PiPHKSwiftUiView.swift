@@ -7,10 +7,10 @@ struct PiPHKSwiftUiView: UIViewRepresentable {
         func connect(to view: PiPHKView)
     }
 
-    typealias UIViewType = HaishinKit.PiPHKView
+    typealias UIViewType = PiPHKView
 
     let previewSource: PreviewSource
-    private var view = HaishinKit.PiPHKView(frame: .zero)
+    private var view = PiPHKView(frame: .zero)
 
     init(previewSource: PreviewSource) {
         self.previewSource = previewSource

@@ -35,7 +35,7 @@ Project name    |Notes       |License
 - [x] FMLE-compatible Authentication
 - [x] Ingest
   - H264, HEVC, AAC and OPUS support.
-- [x] _Playback (Beta)_
+- [x] _Egress (Beta)_
   - H264, HEVC and AAC support.
 - [ ] Action Message Format
   - [x] AMF0
@@ -48,12 +48,17 @@ Project name    |Notes       |License
 ### ✏️ [SRT](SRTHaishinKit/Sources/Docs.docc/index.md)
 - Ingest
   - H264, HEVC and AAC support.
-- Playback
+- _Egress (Beta)_
   - H264, HEVC and AAC support.
 - SRT Mode
   - [x] caller
   - [x] listener
   - [x] rendezvous
+
+### ✏️ [WebRTC(alpha)](RTCHaishinKit/Sources/Docs.docc/index.md)
+- [] WHEP
+- [x] WHIP
+  - H264, OPUS
 
 ### ✏️ [MOQT(alpha)](MoQTHaishinKit/Sources/Docs.docc/index.md)
 > [!NOTE]
@@ -121,10 +126,10 @@ open Examples/Examples.xcodeproj
 |2.1.0+|16.4+|6.0+|
 
 ### OS
-|-|iOS|tvOS|macOS|visionOS|watchOS|
-|:----|:----:|:----:|:----:|:----:|:----:|
-|HaishinKit|13.0+|13.0+|10.15+|1.0+|-|
-|SRTHaishinKit|13.0+|13.0+|10.15+|1.0+|-|
+|iOS|tvOS|macOS|visionOS|Mac Catalyst|watchOS|
+|:----:|:----:|:----:|:----:|:----:|
+|13.0+|13.0+|10.15+|14.0+|1.0+|-|
+- SRTHaishinKit and RTCHaishinKit are not avaliable for Mac Catalyst. 
 
 ### Cocoa Keys
 Please make sure to contains `Info.plist` the following values when accessing the camera or microphone.
