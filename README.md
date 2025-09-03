@@ -127,8 +127,9 @@ open Examples/Examples.xcodeproj
 
 ### OS
 |iOS|tvOS|macOS|visionOS|Mac Catalyst|watchOS|
-|:----:|:----:|:----:|:----:|:----:|
+|:-:|:-:|:-:|:-:|:-:|:-:|
 |13.0+|13.0+|10.15+|14.0+|1.0+|-|
+
 - SRTHaishinKit and RTCHaishinKit are not avaliable for Mac Catalyst. 
 
 ### Cocoa Keys
