@@ -1,7 +1,7 @@
 import CoreMedia
 import Foundation
 
-package enum AVCNALUnitType: UInt8, Equatable {
+package enum H264NALUnitType: UInt8, Equatable {
     case unspec = 0
     case slice = 1 // P frame
     case dpa = 2
@@ -18,14 +18,14 @@ package enum AVCNALUnitType: UInt8, Equatable {
 }
 
 // MARK: -
-package struct AVCNALUnit: NALUnit, Equatable {
+package struct H264NALUnit: NALUnit, Equatable {
     package let refIdc: UInt8
-    package let type: AVCNALUnitType
+    package let type: H264NALUnitType
     package let payload: Data
 
     init(_ data: Data, length: Int) {
         self.refIdc = data[0] >> 5
-        self.type = AVCNALUnitType(rawValue: data[0] & 0x1f) ?? .unspec
+        self.type = H264NALUnitType(rawValue: data[0] & 0x1f) ?? .unspec
         self.payload = data.subdata(in: 1..<length)
     }
 

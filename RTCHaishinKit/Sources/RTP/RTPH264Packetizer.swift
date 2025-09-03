@@ -112,7 +112,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
 
         if start {
             fragmentedBuffer.removeAll(keepingCapacity: false)
-            if h264NALUnitType == AVCNALUnitType.idr.rawValue {
+            if h264NALUnitType == H264NALUnitType.idr.rawValue {
                 if let sequenceParameterSets {
                     fragmentedBuffer.append(RTPH264Packetizer_startCode)
                     fragmentedBuffer.append(sequenceParameterSets)
@@ -145,7 +145,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
             return nil
         }
         let presentationTimeStamp: CMTime = .init(value: CMTimeValue(timestamp), timescale: 90000)
-        let units = nalUnitReader.read(&buffer, type: AVCNALUnit.self)
+        let units = nalUnitReader.read(&buffer, type: H264NALUnit.self)
         var blockBuffer: CMBlockBuffer?
         ISOTypeBufferUtil.toNALFileFormat(&buffer)
         blockBuffer = buffer.makeBlockBuffer()
