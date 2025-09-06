@@ -3,7 +3,7 @@ import Testing
 
 @testable import HaishinKit
 
-@Suite struct HKStreamRecorderTests {
+@Suite struct StreamRecorderTests {
     @Test func startRunning_nil() async throws {
         let recorder = StreamRecorder()
         try await recorder.startRecording(nil)
