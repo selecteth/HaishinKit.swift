@@ -105,10 +105,10 @@ extension MediaStream: _Stream {
             outgoing.append(audioBuffer, when: when)
             outputs.forEach { $0.stream(self, didOutput: audioBuffer, when: when) }
         case let audioBuffer as AVAudioCompressedBuffer:
-
-            Task {            for track in _tracks {
-                await track.append(audioBuffer, when: when)
-            }
+            Task {
+                for track in _tracks {
+                    await track.append(audioBuffer, when: when)
+                }
             }
         default:
             break
