@@ -4,10 +4,9 @@ import Foundation
 import HaishinKit
 
 final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
+    let ssrc: UInt32
+    let payloadType: UInt8
     weak var delegate: T?
-
-    var ssrc: UInt32 = 12345678
-    var payloadType: UInt8 = 111
     private var sequenceNumber: UInt16 = 0
     private var formatDescription: CMAudioFormatDescription?
     private lazy var jitterBuffer: RTPJitterBuffer<RTPOpusPacketizer> = {
@@ -15,6 +14,11 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         jitterBuffer.delegate = self
         return jitterBuffer
     }()
+
+    init(ssrc: UInt32, payloadType: UInt8) {
+        self.ssrc = ssrc
+        self.payloadType = payloadType
+    }
 
     func append(_ packet: RTPPacket) {
         jitterBuffer.append(packet)

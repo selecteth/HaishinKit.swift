@@ -2,7 +2,7 @@ import AVFoundation
 import HaishinKit
 import libdatachannel
 
-actor RTCMediaStream {
+actor MediaStream {
     enum Error: Swift.Error {
         case unsupportedCodec
     }
@@ -10,6 +10,7 @@ actor RTCMediaStream {
     static let supportedAudioCodecs: [AudioCodecSettings.Format] = [.aac, .opus]
     static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
 
+    let id: String = UUID().uuidString
     private(set) var videoTrackId: UInt8? = UInt8.max
     private(set) var audioTrackId: UInt8? = UInt8.max
     package lazy var incoming = IncomingStream(self)
@@ -18,18 +19,6 @@ actor RTCMediaStream {
     package var readyState: StreamReadyState = .idle
     package var bitRateStrategy: (any StreamBitRateStrategy)?
     private var mapper: [UInt32: Int32] = [:]
-
-    private lazy var videoPacketizer: any RTPPacketizer = {
-        let packetizer = RTPH264Packetizer<RTCMediaStream>()
-        packetizer.delegate = self
-        return packetizer
-    }()
-
-    private lazy var audioPacketizer: any RTPPacketizer = {
-        let packetizer = RTPOpusPacketizer<RTCMediaStream>()
-        packetizer.delegate = self
-        return packetizer
-    }()
     private var direction: RTCDirection = .sendonly
 
     func setDirection(_ direction: RTCDirection) {
@@ -61,22 +50,17 @@ actor RTCMediaStream {
         }
     }
 
-    private func send(_ packet: RTPPacket) {
-        guard let track = mapper[packet.ssrc] else {
-            return
+    private var _tracks: [MediaStreamTrack] = []
+    var tracks: [MediaStreamTrack] {
+        if _tracks.isEmpty {
+            _tracks.append(.init(mid: "1", streamId: id, audioCodecSettings: outgoing.audioSettings))
+            _tracks.append(.init(mid: "0", streamId: id, videoCodecSettings: outgoing.videoSettings))
         }
-        do {
-            let message = packet.data
-            try RTCError.check(message.withUnsafeBytes { pointer in
-                rtcSendMessage(track, pointer.bindMemory(to: CChar.self).baseAddress, Int32(message.count))
-            })
-        } catch {
-            logger.warn(error)
-        }
+        return _tracks
     }
 }
 
-extension RTCMediaStream: _Stream {
+extension MediaStream: _Stream {
     func setAudioSettings(_ audioSettings: AudioCodecSettings) throws {
         guard Self.supportedAudioCodecs.contains(audioSettings.format) else {
             throw Error.unsupportedCodec
@@ -95,11 +79,10 @@ extension RTCMediaStream: _Stream {
         switch sampleBuffer.formatDescription?.mediaType {
         case .video:
             if sampleBuffer.formatDescription?.isCompressed == true {
-                guard mapper[videoPacketizer.ssrc] != nil else {
-                    return
-                }
-                videoPacketizer.append(sampleBuffer) { packet in
-                    send(packet)
+                Task {
+                    for track in _tracks {
+                        await track.append(sampleBuffer)
+                    }
                 }
             } else {
                 outgoing.append(sampleBuffer)
@@ -122,11 +105,10 @@ extension RTCMediaStream: _Stream {
             outgoing.append(audioBuffer, when: when)
             outputs.forEach { $0.stream(self, didOutput: audioBuffer, when: when) }
         case let audioBuffer as AVAudioCompressedBuffer:
-            guard mapper[audioPacketizer.ssrc] != nil else {
-                return
+
+            Task {            for track in _tracks {
+                await track.append(audioBuffer, when: when)
             }
-            audioPacketizer.append(audioBuffer, when: when).forEach { packet in
-                send(packet)
             }
         default:
             break
@@ -142,7 +124,7 @@ extension RTCMediaStream: _Stream {
     }
 }
 
-extension RTCMediaStream: RTPPacketizerDelegate {
+extension MediaStream: RTPPacketizerDelegate {
     // MARK: RTPPacketizerDelegate
     nonisolated func packetizer(_ packetizer: some RTPPacketizer, didOutput sampleBuffer: CMSampleBuffer) {
         Task {
@@ -151,7 +133,7 @@ extension RTCMediaStream: RTPPacketizerDelegate {
     }
 }
 
-extension RTCMediaStream: RTCTrackDelegate {
+extension MediaStream: RTCTrackDelegate {
     // MARK: RTCTrackDelegate
     nonisolated func track(_ track: RTCTrack, didSetOpen isOpen: Bool) {
         let ssrc = track.ssrc
@@ -161,29 +143,14 @@ extension RTCMediaStream: RTCTrackDelegate {
         }
     }
 
-    nonisolated func track(_ track: RTCTrack, didReceiveMessage message: Data) {
+    nonisolated func track(_ track: RTCTrack, didOutput buffer: CMSampleBuffer) {
         Task {
-            do {
-                await append(try RTPPacket(message))
-            } catch {
-                logger.warn(error)
-            }
-        }
-    }
-
-    private func append(_ packet: RTPPacket) {
-        switch packet.payloadType {
-        case 98:
-            videoPacketizer.append(packet)
-        case 111:
-            audioPacketizer.append(packet)
-        default:
-            break
+            await incoming.append(buffer)
         }
     }
 }
 
-extension RTCMediaStream: MediaMixerOutput {
+extension MediaStream: MediaMixerOutput {
     // MARK: MediaMixerOutput
     func selectTrack(_ id: UInt8?, mediaType: CMFormatDescription.MediaType) {
         switch mediaType {

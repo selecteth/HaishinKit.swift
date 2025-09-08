@@ -9,6 +9,25 @@ protocol RTCPeerConnectionDelegate: AnyObject {
 }
 
 final class RTCPeerConnection {
+    static let audioMediaDescription = """
+m=audio 9 UDP/TLS/RTP/SAVPF 111
+a=mid:0
+a=recvonly
+a=rtpmap:111 opus/48000/2
+a=fmtp:111 minptime=10;useinbandfec=1;stereo=1;sprop-stereo=1
+"""
+
+    static let videoMediaDescription = """
+m=video 9 UDP/TLS/RTP/SAVPF 98
+a=mid:1
+a=recvonly
+a=rtpmap:98 H264/90000
+a=rtcp-fb:98 goog-remb
+a=rtcp-fb:98 nack
+a=rtcp-fb:98 nack pli
+a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
+"""
+
     static let bufferSize: Int = 1024 * 16
 
     weak var delegate: (any RTCPeerConnectionDelegate)?
@@ -75,19 +94,27 @@ final class RTCPeerConnection {
         rtcDeletePeerConnection(connection)
     }
 
-    func addTrack(_ media: (some SDPMediaDescription), direction: RTCDirection) throws -> RTCTrack {
-        var trackInit = try media.makeRtcTrackInit(direction)
-        let result = try RTCError.check(rtcAddTrackEx(connection, &trackInit))
-        let track = RTCTrack(id: result)
-        tracks.append(track)
-        return track
+    func addTrack(_ track: MediaStreamTrack) {
+        let connection = self.connection
+        Task {
+            try await track.addTrack(connection, direction: .sendonly)
+        }
     }
 
-    func addTrack(_ sdp: String) throws -> RTCTrack {
+    @discardableResult
+    func addTrack(_ kind: MediaStreamKind, stream: MediaStream) throws -> RTCTrack {
+        let sdp: String
+        switch kind {
+        case .audio:
+            sdp = Self.audioMediaDescription
+        case .video:
+            sdp = Self.videoMediaDescription
+        }
         let result = try RTCError.check(sdp.withCString { cString in
             rtcAddTrack(connection, cString)
         })
         let track = RTCTrack(id: result)
+        track.delegate = stream
         tracks.append(track)
         return track
     }

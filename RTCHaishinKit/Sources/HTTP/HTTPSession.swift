@@ -37,7 +37,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     private let uri: URL
     private var location: URL?
     private var maxRetryCount: Int = 0
-    private var _stream = RTCMediaStream()
+    private var _stream = MediaStream()
     private var method: SessionMethod
     private lazy var peerConnection: RTCPeerConnection = {
         let conneciton = RTCPeerConnection()
@@ -60,31 +60,13 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
         switch method {
         case .ingest:
             try await _stream.setAudioSettings(.init(format: .opus))
-            let audioTrack = try peerConnection.addTrack(SDPAudioDescription(
-                                                            format: .opus,
-                                                            ssrc: 12345678,
-                                                            pt: 111,
-                                                            mid: "0",
-                                                            name: "audio1",
-                                                            msid: "stream-0",
-                                                            trackId: "audio1-track1"), direction: .sendonly
-            )
-            audioTrack.delegate = _stream
-            let videoTrack = try peerConnection.addTrack(SDPVideoDescription(
-                                                            format: .h264,
-                                                            ssrc: 12345679,
-                                                            pt: 98,
-                                                            mid: "1",
-                                                            name: "video1",
-                                                            msid: "stream-1",
-                                                            trackId: "video1-track1"), direction: .sendonly)
-            videoTrack.delegate = _stream
+            await _stream.tracks.forEach { track in
+                peerConnection.addTrack(track)
+            }
         case .playback:
             await _stream.setDirection(.recvonly)
-            let audioTrack = try peerConnection.addTrack(Self.audioMediaDescription)
-            audioTrack.delegate = _stream
-            let videoTrack = try peerConnection.addTrack(Self.videoMediaDescription)
-            videoTrack.delegate = _stream
+            try peerConnection.addTrack(.audio, stream: _stream)
+            try peerConnection.addTrack(.video, stream: _stream)
         }
         do {
             try peerConnection.setLocalDesciption(.offer)
@@ -144,7 +126,9 @@ extension HTTPSession: RTCPeerConnectionDelegate {
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState) {
         Task {
             if state == .connected {
-                await _stream.setDirection(.sendonly)
+                if await method == .ingest {
+                    await _stream.setDirection(.sendonly)
+                }
             }
         }
     }

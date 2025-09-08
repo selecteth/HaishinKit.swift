@@ -7,8 +7,8 @@ private let RTPH264Packetizer_startCode = Data([0x00, 0x00, 0x00, 0x01])
 
 /// https://datatracker.ietf.org/doc/html/rfc3984
 final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
-    var ssrc: UInt32 = 12345679
-    var payloadType: UInt8 = 98
+    let ssrc: UInt32
+    let payloadType: UInt8
     weak var delegate: T?
     private var sequenceNumber: UInt16 = 0
     private var buffer = Data()
@@ -28,6 +28,11 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         jitterBuffer.delegate = self
         return jitterBuffer
     }()
+
+    init(ssrc: UInt32, payloadType: UInt8) {
+        self.ssrc = ssrc
+        self.payloadType = payloadType
+    }
 
     func append(_ packet: RTPPacket) {
         jitterBuffer.append(packet)
