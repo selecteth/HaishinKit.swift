@@ -56,9 +56,9 @@ struct SDPVideoDescription: Sendable, SDPMediaDescription {
 extension SDPVideoDescription {
     func makeRtcTrackInit(_ direction: RTCDirection) throws -> rtcTrackInit {
         // TODO: Fix memory leak
-        
+
         var profile = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"
-        
+
         return rtcTrackInit(
             direction: direction.cValue,
             codec: format.cValue,

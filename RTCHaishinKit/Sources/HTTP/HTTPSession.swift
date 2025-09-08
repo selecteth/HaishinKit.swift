@@ -143,7 +143,7 @@ extension HTTPSession: RTCPeerConnectionDelegate {
 
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState) {
         Task {
-            if (state == .connected) {
+            if state == .connected {
                 await _stream.setDirection(.sendonly)
             }
         }
@@ -151,8 +151,7 @@ extension HTTPSession: RTCPeerConnectionDelegate {
 
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didReceive track: RTCTrack) {
     }
-    
+
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCICECandidate) {
-    
     }
 }

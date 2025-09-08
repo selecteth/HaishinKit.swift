@@ -27,7 +27,7 @@ final package class NALUnitReader {
         let header = Int(Self.defaultNALUnitHeaderLength)
         let length = buffer.dataBuffer?.dataLength ?? 0
         var result: [Data] = []
-        
+
         if !buffer.isNotSync {
             result.append(Data([0x09, 0x10]))
             buffer.formatDescription?.parameterSets.forEach {
@@ -36,7 +36,7 @@ final package class NALUnitReader {
         } else {
             result.append(Data([0x09, 0x30]))
         }
-        
+
         try? buffer.dataBuffer?.withUnsafeMutableBytes { buffer in
             guard let baseAddress = buffer.baseAddress else {
                 return
