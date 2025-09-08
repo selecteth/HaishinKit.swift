@@ -64,7 +64,7 @@ actor MediaStreamTrack {
         track = RTCTrack(id: result)
     }
 
-    func makeRtcTrackInit(_ direction: RTCDirection) -> rtcTrackInit {
+    private func makeRtcTrackInit(_ direction: RTCDirection) -> rtcTrackInit {
         // TODO: Fix memory leak
         return rtcTrackInit(
             direction: direction.cValue,
@@ -75,8 +75,7 @@ actor MediaStreamTrack {
             name: strdup(name),
             msid: strdup(msid),
             trackId: strdup(trackId),
-            profile: codec == RTC_CODEC_H264 ?
-                strdup("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f") : nil
+            profile: profile == nil ? nil : strdup(profile)
         )
     }
 }

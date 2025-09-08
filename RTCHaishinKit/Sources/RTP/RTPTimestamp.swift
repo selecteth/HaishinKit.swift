@@ -2,20 +2,22 @@ import CoreMedia
 import Foundation
 
 struct RTPTimestamp {
+    static let startedAt: Double = -1
+
     private let rate: Double
-    private var startedAt: Double = -1
+    private var startedAt = Self.startedAt
 
     init(_ rate: Double) {
         self.rate = rate
     }
 
     func convert(_ timestamp: UInt32) -> CMTime {
-        return CMTime(seconds: Double(timestamp), preferredTimescale: CMTimeScale(rate))
+        return CMTime(value: CMTimeValue(timestamp), timescale: CMTimeScale(rate))
     }
 
     mutating func convert(_ time: CMTime) -> UInt32 {
         let seconds = time.seconds
-        if startedAt == -1 {
+        if startedAt == Self.startedAt {
             startedAt = seconds
         }
         let timestamp = UInt64((seconds - startedAt) * rate)
@@ -23,6 +25,6 @@ struct RTPTimestamp {
     }
 
     mutating func reset() {
-        startedAt = -1
+        startedAt = Self.startedAt
     }
 }

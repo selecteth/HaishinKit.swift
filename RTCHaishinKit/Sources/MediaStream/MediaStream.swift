@@ -11,6 +11,14 @@ actor MediaStream {
     static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
 
     let id: String = UUID().uuidString
+    private var _tracks: [MediaStreamTrack] = []
+    var tracks: [MediaStreamTrack] {
+        if _tracks.isEmpty {
+            _tracks.append(.init(mid: "1", streamId: id, audioCodecSettings: outgoing.audioSettings))
+            _tracks.append(.init(mid: "0", streamId: id, videoCodecSettings: outgoing.videoSettings))
+        }
+        return _tracks
+    }
     private(set) var videoTrackId: UInt8? = UInt8.max
     private(set) var audioTrackId: UInt8? = UInt8.max
     package lazy var incoming = IncomingStream(self)
@@ -18,7 +26,6 @@ actor MediaStream {
     package var outputs: [any StreamOutput] = []
     package var readyState: StreamReadyState = .idle
     package var bitRateStrategy: (any StreamBitRateStrategy)?
-    private var mapper: [UInt32: Int32] = [:]
     private var direction: RTCDirection = .sendonly
 
     func setDirection(_ direction: RTCDirection) {
@@ -48,15 +55,6 @@ actor MediaStream {
         default:
             break
         }
-    }
-
-    private var _tracks: [MediaStreamTrack] = []
-    var tracks: [MediaStreamTrack] {
-        if _tracks.isEmpty {
-            _tracks.append(.init(mid: "1", streamId: id, audioCodecSettings: outgoing.audioSettings))
-            _tracks.append(.init(mid: "0", streamId: id, videoCodecSettings: outgoing.videoSettings))
-        }
-        return _tracks
     }
 }
 
@@ -118,29 +116,11 @@ extension MediaStream: _Stream {
     func dispatch(_ event: NetworkMonitorEvent) async {
         await bitRateStrategy?.adjustBitrate(event, stream: self)
     }
-
-    func addTrack(_ ssrc: UInt32, id: Int32) {
-        mapper[ssrc] = id
-    }
-}
-
-extension MediaStream: RTPPacketizerDelegate {
-    // MARK: RTPPacketizerDelegate
-    nonisolated func packetizer(_ packetizer: some RTPPacketizer, didOutput sampleBuffer: CMSampleBuffer) {
-        Task {
-            await incoming.append(sampleBuffer)
-        }
-    }
 }
 
 extension MediaStream: RTCTrackDelegate {
     // MARK: RTCTrackDelegate
     nonisolated func track(_ track: RTCTrack, didSetOpen isOpen: Bool) {
-        let ssrc = track.ssrc
-        let id = track.id
-        Task {
-            await addTrack(ssrc, id: id)
-        }
     }
 
     nonisolated func track(_ track: RTCTrack, didOutput buffer: CMSampleBuffer) {
