@@ -102,8 +102,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         }
     }
 
-    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) -> [RTPPacket] {
-        return []
+    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime, lambda: (RTPPacket) -> Void) {
     }
 
     private func decode(_ packet: RTPPacket) {

@@ -41,8 +41,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "libdatachannel",
-            url: "https://github.com/HaishinKit/libdatachannel-xcframework/releases/download/v0.23.1/libdatachannel.xcframework.zip",
-            checksum: "fe37fa856802f0cdb017161837e433f8279fd94f8f237b442bbba0b2e0616364"
+            url: "https://github.com/HaishinKit/libdatachannel-xcframework/releases/download/v0.23.2/libdatachannel.xcframework.zip",
+            checksum: "45ed389bfbc06034f8d4daaeddd412250089b0e89d25016008a391afe6bc0809"
         ),
         .target(
             name: "HaishinKit",

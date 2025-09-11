@@ -15,5 +15,5 @@ protocol RTPPacketizer {
 
     func append(_ buffer: CMSampleBuffer, lambda: (RTPPacket) -> Void)
 
-    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) -> [RTPPacket]
+    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime, lambda: (RTPPacket) -> Void)
 }

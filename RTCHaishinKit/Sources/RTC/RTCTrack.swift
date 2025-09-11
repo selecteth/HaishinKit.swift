@@ -58,7 +58,7 @@ final class RTCTrack: RTCChannel {
     }
 
     func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) {
-        packetizer?.append(buffer, when: when).forEach { packet in
+        packetizer?.append(buffer, when: when) { packet in
             try? send(packet.data)
         }
     }

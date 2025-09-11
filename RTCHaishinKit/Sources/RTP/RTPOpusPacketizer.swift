@@ -7,6 +7,7 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     let ssrc: UInt32
     let payloadType: UInt8
     weak var delegate: T?
+    private var timestamp: RTPTimestamp = .init(48000.0)
     private var sequenceNumber: UInt16 = 0
     private var formatDescription: CMAudioFormatDescription?
     private lazy var jitterBuffer: RTPJitterBuffer<RTPOpusPacketizer> = {
@@ -27,8 +28,8 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     func append(_ buffer: CMSampleBuffer, lambda: (RTPPacket) -> Void) {
     }
 
-    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime) -> [RTPPacket] {
-        let packet = RTPPacket(
+    func append(_ buffer: AVAudioCompressedBuffer, when: AVAudioTime, lambda: (RTPPacket) -> Void) {
+        lambda(RTPPacket(
             version: RTPPacket.version,
             padding: false,
             extension: false,
@@ -36,29 +37,14 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
             marker: true,
             payloadType: payloadType,
             sequenceNumber: sequenceNumber,
-            timestamp: timestamp,
+            timestamp: timestamp.convert(when),
             ssrc: ssrc,
             payload: Data(
                 bytes: buffer.data.assumingMemoryBound(to: UInt8.self),
                 count: Int(buffer.byteLength)
             )
-        )
-        timestamp += 960
+        ))
         sequenceNumber &+= 1
-        return [packet]
-    }
-
-    var timestamp: UInt32 = 0
-    var baseRtpTimestamp: UInt32 = 0
-    var baseSampleTime: AVAudioFramePosition = -1
-    let sampleRate: Double = 48_000
-
-    private func timestamp(for audioTime: AVAudioTime) -> UInt32 {
-        if baseSampleTime == -1 {
-            baseSampleTime = audioTime.sampleTime
-        }
-        let delta = audioTime.sampleTime - baseSampleTime
-        return baseRtpTimestamp &+ UInt32(delta)
     }
 
     private func decode(_ packet: RTPPacket) {
@@ -74,7 +60,6 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         guard formatDescription != nil else {
             return nil
         }
-        let presentationTimeStamp: CMTime = .init(value: CMTimeValue(timestamp), timescale: 48000)
         // TODO
         let newBuffer = Data([UInt8](repeating: 0, count: 7)) + buffer
         var blockBuffer: CMBlockBuffer?
@@ -83,7 +68,7 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         var sampleBuffer: CMSampleBuffer?
         var timing = CMSampleTimingInfo(
             duration: .invalid,
-            presentationTimeStamp: presentationTimeStamp,
+            presentationTimeStamp: self.timestamp.convert(timestamp),
             decodeTimeStamp: .invalid
         )
         sampleSizes.append(newBuffer.count)
