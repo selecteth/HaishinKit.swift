@@ -1,6 +1,4 @@
-# Offscreen rendering api.
-
-## Overview
+# Video mixing
 HaishinKit provides APIs for overlaying still images on camera footage and for embedding text. These features are collectively referred to as [ScreenObjects](https://docs.haishinkit.com/swift/latest/documentation/haishinkit/screenobject).
 Filtering with CIFilter is also supported, and for use cases such as applying a mosaic effect to camera footage, the use of CIFilter is recommended.
 
