@@ -4,12 +4,8 @@ import libdatachannel
 struct RTCConfiguration: Sendable {
     let iceServers: [String]
 
-    init(iceServers: [String]) {
-        self.iceServers = iceServers
-    }
-
-    var cValue: rtcConfiguration {
+    func createPeerConnection() -> Int32 {
         var config = rtcConfiguration()
-        return rtcConfiguration()
+        return rtcCreatePeerConnection(&config)
     }
 }

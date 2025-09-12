@@ -48,9 +48,8 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     }
     private(set) var localDescription: String = ""
 
-    init() {
-        var config = RTCConfiguration(iceServers: []).cValue
-        connection = rtcCreatePeerConnection(&config)
+    init(_ config: RTCConfiguration) {
+        connection = config.createPeerConnection()
         rtcSetUserPointer(connection, Unmanaged.passUnretained(self).toOpaque())
         rtcSetLocalDescriptionCallback(connection) { _, sdp, _, pointer in
             guard let pointer else { return }
@@ -90,7 +89,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     }
 
     deinit {
-        tracks.removeAll()
+        close()
         rtcDeletePeerConnection(connection)
     }
 
@@ -133,14 +132,14 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
         })
     }
 
-    func createOffer() -> String {
-        return CUtil.getString { buffer, size in
+    func createOffer() throws -> String {
+        return try CUtil.getString { buffer, size in
             rtcCreateOffer(connection, buffer, size)
         }
     }
 
-    func createAnswer() -> String {
-        return CUtil.getString { buffer, size in
+    func createAnswer() throws -> String {
+        return try CUtil.getString { buffer, size in
             rtcCreateAnswer(connection, buffer, size)
         }
     }

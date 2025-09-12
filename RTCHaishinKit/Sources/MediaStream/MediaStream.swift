@@ -56,6 +56,20 @@ actor MediaStream {
             break
         }
     }
+
+    func close() async {
+        _tracks.removeAll()
+        switch direction {
+        case .sendonly:
+            outgoing.stopRunning()
+        case .recvonly:
+            Task {
+                await incoming.stopRunning()
+            }
+        default:
+            break
+        }
+    }
 }
 
 extension MediaStream: _Stream {

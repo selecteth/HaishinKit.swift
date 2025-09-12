@@ -2,25 +2,6 @@ import Foundation
 import HaishinKit
 
 actor HTTPSession: Session {
-    static let audioMediaDescription = """
-m=audio 9 UDP/TLS/RTP/SAVPF 111
-a=mid:0
-a=recvonly
-a=rtpmap:111 opus/48000/2
-a=fmtp:111 minptime=10;useinbandfec=1;stereo=1;sprop-stereo=1
-"""
-
-    static let videoMediaDescription = """
-m=video 9 UDP/TLS/RTP/SAVPF 98
-a=mid:1
-a=recvonly
-a=rtpmap:98 H264/90000
-a=rtcp-fb:98 goog-remb
-a=rtcp-fb:98 nack
-a=rtcp-fb:98 nack pli
-a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
-"""
-
     var connected: Bool {
         get async {
             peerConnection.state == .connected
@@ -39,11 +20,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     private var maxRetryCount: Int = 0
     private var _stream = MediaStream()
     private var method: SessionMethod
-    private lazy var peerConnection: RTCPeerConnection = {
-        let conneciton = RTCPeerConnection()
-        conneciton.delegate = self
-        return conneciton
-    }()
+    private lazy var peerConnection: RTCPeerConnection = makePeerConnection()
 
     init(uri: URL, method: SessionMethod) {
         logger.level = .debug
@@ -56,7 +33,11 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     }
 
     func connect(_ disconnected: @Sendable @escaping () -> Void) async throws {
+        guard _readyState.value == .closed else {
+            return
+        }
         _readyState.value = .connecting
+        peerConnection = makePeerConnection()
         switch method {
         case .ingest:
             try await _stream.setAudioSettings(.init(format: .opus))
@@ -75,13 +56,15 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
             _readyState.value = .open
         } catch {
             logger.warn(error)
+            await _stream.close()
+            peerConnection.close()
             _readyState.value = .closed
             throw error
         }
     }
 
     func close() async throws {
-        guard let location else {
+        guard let location, _readyState.value == .open else {
             return
         }
         _readyState.value = .closing
@@ -89,6 +72,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
         request.httpMethod = "DELETE"
         request.addValue("application/sdp", forHTTPHeaderField: "Content-Type")
         _ = try await URLSession.shared.data(for: request)
+        await _stream.close()
         peerConnection.close()
         self.location = nil
         _readyState.value = .closed
@@ -115,6 +99,12 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
             }
         }
         return String(data: data, encoding: .utf8) ?? ""
+    }
+
+    private func makePeerConnection() -> RTCPeerConnection {
+        let conneciton = RTCPeerConnection(RTCConfiguration(iceServers: []))
+        conneciton.delegate = self
+        return conneciton
     }
 }
 

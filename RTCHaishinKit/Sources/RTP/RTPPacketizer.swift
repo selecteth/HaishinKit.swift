@@ -8,7 +8,7 @@ protocol RTPPacketizerDelegate: AnyObject {
 protocol RTPPacketizer {
     associatedtype T: RTPPacketizerDelegate
 
-    var delegate: T? { get }
+    var delegate: T? { get set }
     var ssrc: UInt32 { get }
 
     func append(_ packet: RTPPacket)

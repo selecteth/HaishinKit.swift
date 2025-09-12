@@ -13,35 +13,47 @@ final class RTCTrack: RTCChannel {
 
     override var isOpen: Bool {
         didSet {
+            if isOpen {
+                do {
+                    packetizer = try makePacketizer()
+                } catch {
+                    logger.warn(error)
+                }
+            }
             delegate?.track(self, didSetOpen: isOpen)
-            if description.contains("audio") {
-                let p = RTPOpusPacketizer<RTCTrack>(ssrc: ssrc, payloadType: 111)
-                p.delegate = self
-                packetizer = p
-            }
-            if description.contains("video") {
-                let p = RTPH264Packetizer<RTCTrack>(ssrc: ssrc, payloadType: 98)
-                p.delegate = self
-                packetizer = p
-            }
         }
     }
 
     var mid: String {
-        return CUtil.getString { buffer, size in
-            rtcGetTrackMid(id, buffer, size)
+        do {
+            return try CUtil.getString { buffer, size in
+                rtcGetTrackMid(id, buffer, size)
+            }
+        } catch {
+            logger.warn(error)
+            return ""
         }
     }
 
     var description: String {
-        return CUtil.getString { buffer, size in
-            rtcGetTrackDescription(id, buffer, size)
+        do {
+            return try CUtil.getString { buffer, size in
+                rtcGetTrackDescription(id, buffer, size)
+            }
+        } catch {
+            logger.warn(error)
+            return ""
         }
     }
 
     var ssrc: UInt32 {
-        return CUtil.getUInt32 { buffer, size in
-            rtcGetSsrcsForTrack(id, buffer, size)
+        do {
+            return try CUtil.getUInt32 { buffer, size in
+                rtcGetSsrcsForTrack(id, buffer, size)
+            }
+        } catch {
+            logger.warn(error)
+            return 0
         }
     }
 
@@ -68,8 +80,33 @@ final class RTCTrack: RTCChannel {
             let packet = try RTPPacket(message)
             packetizer?.append(packet)
         } catch {
-            logger.warn(error)
+            logger.warn(error, message.bytes)
         }
+    }
+
+    private func makePacketizer() throws -> (any RTPPacketizer)? {
+        let description = try SDPMediaDescription(sdp: description)
+        var result: (any RTPPacketizer)?
+        let rtpmap = description.attributes.compactMap { attr -> (UInt8, String, Int, Int?)? in
+            if case let .rtpmap(payload, codec, clock, channel) = attr { return (payload, codec, clock, channel) }
+            return nil
+        }
+        guard !rtpmap.isEmpty else {
+            return nil
+        }
+        switch rtpmap[0].1.lowercased() {
+        case "opus":
+            let packetizer = RTPOpusPacketizer<RTCTrack>(ssrc: ssrc, payloadType: description.payload)
+            packetizer.delegate = self
+            result = packetizer
+        case "h264":
+            let packetizer = RTPH264Packetizer<RTCTrack>(ssrc: ssrc, payloadType: description.payload)
+            packetizer.delegate = self
+            result = packetizer
+        default:
+            break
+        }
+        return result
     }
 }
 
