@@ -1,3 +1,4 @@
+import HaishinKit
 import SwiftUI
 
 struct PlaybackView: View {
