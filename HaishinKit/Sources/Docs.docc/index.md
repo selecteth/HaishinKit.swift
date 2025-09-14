@@ -30,7 +30,7 @@ let session = try await SessionBuilderFactory.shared.make(URL(string: "srt://hos
   .build()
 ```
 #### Connect
-Playback or ingest will be performed according to the selected mode setting.
+Publish or playback will be performed according to the selected mode setting.
 ```swift
 try session.connect {
   print("on disconnected")

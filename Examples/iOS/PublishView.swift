@@ -37,10 +37,10 @@ enum VideoEffectItem: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-struct IngestView: View {
+struct PublishView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @EnvironmentObject var preference: PreferenceViewModel
-    @StateObject private var model = IngestViewModel()
+    @StateObject private var model = PublishViewModel()
 
     var body: some View {
         ZStack {
@@ -118,7 +118,7 @@ struct IngestView: View {
                         Spacer()
                     case .open:
                         Button(action: {
-                            model.stopIngest()
+                            model.stopPublishing()
                         }, label: {
                             Image(systemName: "stop.circle")
                                 .foregroundColor(.white)
@@ -132,7 +132,7 @@ struct IngestView: View {
                         Spacer()
                     case .closed:
                         Button(action: {
-                            model.startIngest(preference)
+                            model.startPublishing(preference)
                         }, label: {
                             Image(systemName: "record.circle")
                                 .foregroundColor(.white)
@@ -165,5 +165,5 @@ struct IngestView: View {
 }
 
 #Preview {
-    IngestView()
+    PublishView()
 }

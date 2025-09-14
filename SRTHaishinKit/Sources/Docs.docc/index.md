@@ -5,7 +5,7 @@ This module supports the SRT protocol.
 This is a module that supports SRT protocol. It internally uses a library that is built from [libsrt](https://github.com/Haivision/srt) and converted into an xcframework.
 
 ## 🎨 Features
-- Ingest
+- Publish
   - H264, HEVC and AAC support.
 - Playback
   - H264, HEVC and AAC support.
@@ -21,7 +21,7 @@ This is a module that supports SRT protocol. It internally uses a library that i
 await SRTLogger.shared.setLevel(.debug)
 ```
 
-### Ingest
+### Publish
 ```swift
 let mixer = MediaMixer()
 let connection = SRTConnection()
@@ -96,7 +96,7 @@ try await connection.connect("srt://host:port?key=value")
 ```
 
 ## 🔧 Test
-### ffplay as a SRT service for ingest HaishinKit.
+### ffplay as a SRT service for publish HaishinKit.
 ```sh
 $ ffplay -i 'srt://${YOUR_IP_ADDRESS}?mode=listener'
 ```

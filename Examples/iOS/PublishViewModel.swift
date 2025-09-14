@@ -4,7 +4,7 @@ import RTCHaishinKit
 import SwiftUI
 
 @MainActor
-final class IngestViewModel: ObservableObject {
+final class PublishViewModel: ObservableObject {
     @Published var currentFPS: FPS = .fps30
     @Published var visualEffectItem: VideoEffectItem = .none
     @Published private(set) var error: Error?
@@ -36,7 +36,7 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func startIngest(_ preference: PreferenceViewModel) {
+    func startPublishing(_ preference: PreferenceViewModel) {
         Task {
             guard let session else {
                 return
@@ -55,7 +55,7 @@ final class IngestViewModel: ObservableObject {
         }
     }
 
-    func stopIngest() {
+    func stopPublishing() {
         Task {
             do {
                 try await session?.close()
@@ -263,7 +263,7 @@ final class IngestViewModel: ObservableObject {
     }
 }
 
-extension IngestViewModel: MTHKSwiftUiView.PreviewSource {
+extension PublishViewModel: MTHKSwiftUiView.PreviewSource {
     nonisolated func connect(to view: HaishinKit.MTHKView) {
         Task {
             await mixer.addOutput(view)
