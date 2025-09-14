@@ -6,7 +6,7 @@ struct PlaybackView: View {
     var body: some View {
         ZStack {
             VStack {
-                PiPHKSwiftUiView(previewSource: model)
+                PiPHKViewRepresentable(previewSource: model)
             }
             VStack {
                 Spacer()

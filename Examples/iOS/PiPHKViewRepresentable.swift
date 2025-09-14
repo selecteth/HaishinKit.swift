@@ -2,7 +2,7 @@ import AVFoundation
 import HaishinKit
 import SwiftUI
 
-struct PiPHKSwiftUiView: UIViewRepresentable {
+struct PiPHKViewRepresentable: UIViewRepresentable {
     protocol PreviewSource {
         func connect(to view: PiPHKView)
     }

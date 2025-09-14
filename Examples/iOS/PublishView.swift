@@ -45,7 +45,7 @@ struct PublishView: View {
     var body: some View {
         ZStack {
             VStack {
-                MTHKSwiftUiView(previewSource: model)
+                MTHKViewRepresentable(previewSource: model)
             }
             VStack(alignment: .trailing) {
                 HStack(spacing: 16) {

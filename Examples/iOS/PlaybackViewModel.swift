@@ -67,7 +67,7 @@ final class PlaybackViewModel: ObservableObject {
     }
 }
 
-extension PlaybackViewModel: PiPHKSwiftUiView.PreviewSource {
+extension PlaybackViewModel: PiPHKViewRepresentable.PreviewSource {
     // MARK: PiPHKSwiftUiView.PreviewSource
     nonisolated func connect(to view: HaishinKit.PiPHKView) {
         Task { @MainActor in

@@ -263,7 +263,7 @@ final class PublishViewModel: ObservableObject {
     }
 }
 
-extension PublishViewModel: MTHKSwiftUiView.PreviewSource {
+extension PublishViewModel: MTHKViewRepresentable.PreviewSource {
     nonisolated func connect(to view: HaishinKit.MTHKView) {
         Task {
             await mixer.addOutput(view)

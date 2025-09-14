@@ -2,7 +2,7 @@ import AVFoundation
 import HaishinKit
 import SwiftUI
 
-struct MTHKSwiftUiView: UIViewRepresentable {
+struct MTHKViewRepresentable: UIViewRepresentable {
     protocol PreviewSource {
         func connect(to view: MTHKView)
     }

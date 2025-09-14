@@ -156,7 +156,7 @@
 		BCABAC0D2E65BBBC00B0E878 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				PiPHKSwiftUiView.swift,
+				PiPHKViewRepresentable.swift,
 				PlaybackView.swift,
 				PlaybackViewModel.swift,
 			);
