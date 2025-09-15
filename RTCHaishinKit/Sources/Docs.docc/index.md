@@ -1,10 +1,16 @@
 # ``RTCHaishinKit``
 This module supports WHIP/WHEP protocols.
 
-## Overview
+## 🔍 Overview
 RTCHaishinKit is WHIP/WHEP protocols stack in Swift. It internally uses a library that is built from [libdatachannel](https://github.com/paullouisageneau/libdatachannel) and converted into an xcframework.
 
-## 📓Usage
+## 🎨 Features
+- Publish(WHIP)
+  - H264 and OPUS support.
+- Playback(WHEP)
+  - H264 and OPUS support.
+
+## 📓 Usage
 ### Logging
 - Defining a Swift wrapper method for `rtcInitLogger`.
 ```swift

@@ -1,8 +1,8 @@
 # ``SRTHaishinKit``
 This module supports the SRT protocol.
 
-## Overview
-This is a module that supports SRT protocol. It internally uses a library that is built from [libsrt](https://github.com/Haivision/srt) and converted into an xcframework.
+## 🔍 Overview
+SRTHaishinKit is SRT protocols stack in Swift. It internally uses a library that is built from [libsrt](https://github.com/Haivision/srt) and converted into an xcframework.
 
 ## 🎨 Features
 - Publish
@@ -93,6 +93,13 @@ Task {
 - Many SRT options can be defined as query parameters in the connection URL as follows.
 ```swift
 try await connection.connect("srt://host:port?key=value")
+```
+
+### Session
+```swift
+import SRTHaishinKit
+
+await SessionBuilderFactory.shared.register(SRTSessionFactory())
 ```
 
 ## 🔧 Test

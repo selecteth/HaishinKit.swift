@@ -1,5 +1,5 @@
 # Enhanced RTMP
-The support status of Enhanced RTMP in HaishinKit.
+The support status of Enhanced RTMP in RTMPHaishinKit.
 
 ## Overview
 An extended RTMP standard called Enhanced RTMP is being developed by the Veovera Software Organization.
