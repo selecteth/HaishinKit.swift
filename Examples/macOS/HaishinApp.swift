@@ -24,7 +24,11 @@ struct HaishinApp: App {
             await SessionBuilderFactory.shared.register(HTTPSessionFactory())
 
             await RTCLogger.shared.setLevel(.debug)
-            LBLogger(kRTCHaishinKitIdentifier).level = .debug
+            await SRTLogger.shared.setLevel(.debug)
         }
+        LBLogger(kHaishinKitIdentifier).level = .debug
+        LBLogger(kSRTHaishinKitIdentifier).level = .debug
+        LBLogger(kRTCHaishinKitIdentifier).level = .debug
+        LBLogger(kRTMPHaishinKitIdentifier).level = .debug
     }
 }

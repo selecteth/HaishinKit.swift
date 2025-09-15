@@ -43,9 +43,9 @@ struct ContentView: View {
     private func tabIcon(_ tab: Tab) -> String {
         switch tab {
         case .playback:
-            return "house"
+            return "play.circle"
         case .publish:
-            return "gear"
+            return "record.circle"
         case .preference:
             return "info.circle"
         }

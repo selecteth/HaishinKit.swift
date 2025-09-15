@@ -139,14 +139,6 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         let nalUnitType = packet.payload[0] & 0x1F
         switch nalUnitType {
         case 5: // idr
-            if let sequenceParameterSets {
-                buffer.append(RTPH264Packetizer_startCode)
-                buffer.append(sequenceParameterSets)
-            }
-            if let pictureParameterSets {
-                buffer.append(RTPH264Packetizer_startCode)
-                buffer.append(pictureParameterSets)
-            }
             buffer.append(RTPH264Packetizer_startCode)
             buffer.append(packet.payload)
         case 7: // sps
@@ -189,16 +181,6 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
 
         if start {
             fragmentedBuffer.removeAll(keepingCapacity: false)
-            if h264NALUnitType == H264NALUnitType.idr.rawValue {
-                if let sequenceParameterSets {
-                    fragmentedBuffer.append(RTPH264Packetizer_startCode)
-                    fragmentedBuffer.append(sequenceParameterSets)
-                }
-                if let pictureParameterSets {
-                    fragmentedBuffer.append(RTPH264Packetizer_startCode)
-                    fragmentedBuffer.append(pictureParameterSets)
-                }
-            }
             fragmentedBuffer.append(RTPH264Packetizer_startCode)
             fragmentedBuffer.append(indicator & 0x60 | indicator & 0x80 | h264NALUnitType)
             fragmentedBuffer.append(packet.payload[2...])

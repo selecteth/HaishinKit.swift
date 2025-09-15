@@ -33,16 +33,15 @@ final class PlaybackViewModel: ObservableObject {
         do {
             try await session?.close()
         } catch {
-            // logger.error(error)
+            logger.error(error)
         }
     }
 
-    func makeSession() async {
+    func makeSession(_ preference: PreferenceViewModel) async {
         do {
-            session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL())
+            session = try await SessionBuilderFactory.shared.make(preference.makeURL())
                 .setMethod(.playback)
                 .build()
-            await session?.setMaxRetryCount(0)
             guard let session else {
                 return
             }
@@ -56,7 +55,7 @@ final class PlaybackViewModel: ObservableObject {
                 }
             }
         } catch {
-            // logger.error(error)
+            logger.error(error)
         }
     }
 }
