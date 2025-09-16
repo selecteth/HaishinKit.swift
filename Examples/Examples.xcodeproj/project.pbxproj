@@ -220,13 +220,13 @@
 		2945CBB31B4BE66000104112 = {
 			isa = PBXGroup;
 			children = (
-				BC912A762D12F0600077EFF3 /* Frameworks */,
+				BC9129382D12EA820077EFF3 /* Preference.swift */,
 				BC6841632E3CFBE0008FBFEE /* iOS */,
 				BCFE627F2E770A9900941209 /* macOS */,
-				BC9129382D12EA820077EFF3 /* Preference.swift */,
-				2945CBBE1B4BE66000104112 /* Products */,
 				BC91296B2D12EA910077EFF3 /* tvOS */,
 				BC9129712D12EA930077EFF3 /* visionOS */,
+				BC912A762D12F0600077EFF3 /* Frameworks */,
+				2945CBBE1B4BE66000104112 /* Products */,
 			);
 			sourceTree = "<group>";
 			wrapsLines = 0;
