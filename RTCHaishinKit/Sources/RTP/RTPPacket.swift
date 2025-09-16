@@ -1,3 +1,4 @@
+import AVFAudio
 import Foundation
 
 /// https://datatracker.ietf.org/doc/html/rfc3550
@@ -19,6 +20,23 @@ struct RTPPacket: Sendable {
     let timestamp: UInt32
     let ssrc: UInt32
     let payload: Data
+
+    func copyBytes(to buffer: AVAudioCompressedBuffer) {
+        let byteLength = UInt32(payload.count)
+        buffer.packetDescriptions?.pointee = AudioStreamPacketDescription(
+            mStartOffset: 0,
+            mVariableFramesInPacket: 0,
+            mDataByteSize: byteLength
+        )
+        buffer.packetCount = 1
+        buffer.byteLength = byteLength
+        payload.withUnsafeBytes { pointer in
+            guard let baseAddress = pointer.baseAddress else {
+                return
+            }
+            buffer.data.copyMemory(from: baseAddress, byteCount: payload.count)
+        }
+    }
 }
 
 extension RTPPacket {

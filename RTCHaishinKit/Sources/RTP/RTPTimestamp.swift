@@ -12,6 +12,10 @@ struct RTPTimestamp {
         self.rate = rate
     }
 
+    func convert(_ timestamp: UInt32) -> AVAudioTime {
+        return AVAudioTime(hostTime: AVAudioTime.hostTime(forSeconds: Double(timestamp) / rate))
+    }
+
     func convert(_ timestamp: UInt32) -> CMTime {
         return CMTime(value: CMTimeValue(timestamp), timescale: CMTimeScale(rate))
     }

@@ -3,13 +3,16 @@ import CoreMedia
 import Foundation
 import HaishinKit
 
+private let kRTPOpusPacketizer_sampleRate = 48000.0
+
 final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     let ssrc: UInt32
     let payloadType: UInt8
     weak var delegate: T?
-    private var timestamp: RTPTimestamp = .init(48000.0)
+    var formatParameter = RTPFormatParameter()
+    private var timestamp: RTPTimestamp = .init(kRTPOpusPacketizer_sampleRate)
+    private var audioFormat: AVAudioFormat?
     private var sequenceNumber: UInt16 = 0
-    private var formatDescription: CMAudioFormatDescription?
     private lazy var jitterBuffer: RTPJitterBuffer<RTPOpusPacketizer> = {
         let jitterBuffer = RTPJitterBuffer<RTPOpusPacketizer>()
         jitterBuffer.delegate = self
@@ -48,61 +51,29 @@ final class RTPOpusPacketizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     }
 
     private func decode(_ packet: RTPPacket) {
-        if formatDescription == nil {
-            formatDescription = makeFormatDescription()
+        if audioFormat == nil {
+            if let formatDescription = makeFormatDescription() {
+                audioFormat = .init(cmAudioFormatDescription: formatDescription)
+            }
         }
-        if let buffer = makeSampleBuffer(packet.payload, timestamp: packet.timestamp) {
-            delegate?.packetizer(self, didOutput: buffer)
+        if let audioFormat {
+            let buffer = AVAudioCompressedBuffer(format: audioFormat, packetCapacity: 1, maximumPacketSize: packet.payload.count)
+            packet.copyBytes(to: buffer)
+            delegate?.packetizer(self, didOutput: buffer, when: timestamp.convert(packet.timestamp))
         }
-    }
-
-    private func makeSampleBuffer(_ buffer: Data, timestamp: UInt32) -> CMSampleBuffer? {
-        guard formatDescription != nil else {
-            return nil
-        }
-        // TODO
-        let newBuffer = Data([UInt8](repeating: 0, count: 7)) + buffer
-        var blockBuffer: CMBlockBuffer?
-        blockBuffer = newBuffer.makeBlockBuffer()
-        var sampleSizes: [Int] = []
-        var sampleBuffer: CMSampleBuffer?
-        var timing = CMSampleTimingInfo(
-            duration: .invalid,
-            presentationTimeStamp: self.timestamp.convert(timestamp),
-            decodeTimeStamp: .invalid
-        )
-        sampleSizes.append(newBuffer.count)
-        guard let blockBuffer, CMSampleBufferCreate(
-                allocator: kCFAllocatorDefault,
-                dataBuffer: blockBuffer,
-                dataReady: true,
-                makeDataReadyCallback: nil,
-                refcon: nil,
-                formatDescription: formatDescription,
-                sampleCount: sampleSizes.count,
-                sampleTimingEntryCount: 1,
-                sampleTimingArray: &timing,
-                sampleSizeEntryCount: sampleSizes.count,
-                sampleSizeArray: &sampleSizes,
-                sampleBufferOut: &sampleBuffer) == noErr else {
-            return nil
-        }
-        sampleBuffer?.isNotSync = false
-        return sampleBuffer
     }
 
     package func makeFormatDescription() -> CMFormatDescription? {
         var formatDescription: CMAudioFormatDescription?
-        // TODO
-        let framesPerPacket = AVAudioFrameCount(48000 * 0.02)
+        let framesPerPacket = AVAudioFrameCount(kRTPOpusPacketizer_sampleRate * 0.02)
         var audioStreamBasicDescription = AudioStreamBasicDescription(
-            mSampleRate: 48000,
+            mSampleRate: kRTPOpusPacketizer_sampleRate,
             mFormatID: kAudioFormatOpus,
             mFormatFlags: 0,
             mBytesPerPacket: 0,
             mFramesPerPacket: framesPerPacket,
             mBytesPerFrame: 0,
-            mChannelsPerFrame: 2,
+            mChannelsPerFrame: formatParameter.stereo == true ? 2 : 1,
             mBitsPerChannel: 0,
             mReserved: 0
         )

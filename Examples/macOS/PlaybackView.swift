@@ -15,8 +15,6 @@ struct PlaybackView: View {
                     ProgressView()
                 }
             }
-        }.onAppear {
-            Task { await model.makeSession(preference) }
         }.alert(isPresented: $model.isShowError) {
             Alert(
                 title: Text("Error"),
@@ -33,9 +31,7 @@ struct PlaybackView: View {
             case .open:
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
-                        Task {
-                            await model.stop()
-                        }
+                        model.stop()
                     }) {
                         Image(systemName: "stop.circle")
                     }
@@ -43,9 +39,7 @@ struct PlaybackView: View {
             case .closed:
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
-                        Task {
-                            await model.start()
-                        }
+                        model.start(preference)
                     }) {
                         Image(systemName: "play.circle")
                     }

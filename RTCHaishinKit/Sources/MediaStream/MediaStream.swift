@@ -142,6 +142,12 @@ extension MediaStream: RTCTrackDelegate {
             await incoming.append(buffer)
         }
     }
+
+    nonisolated func track(_ track: RTCTrack, didOutput buffer: AVAudioCompressedBuffer, when: AVAudioTime) {
+        Task {
+            await incoming.append(buffer, when: when)
+        }
+    }
 }
 
 extension MediaStream: MediaMixerOutput {

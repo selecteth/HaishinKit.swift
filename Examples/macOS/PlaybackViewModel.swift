@@ -13,31 +13,35 @@ final class PlaybackViewModel: ObservableObject {
     private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
     private var pictureInPictureController: AVPictureInPictureController?
 
-    func start() async {
-        guard let session else {
-            return
-        }
-        do {
-            try await session.connect {
-                Task { @MainActor in
-                    self.isShowError = true
-                }
+    func start(_ preference: PreferenceViewModel) {
+        Task {
+            if session == nil {
+                await makeSession(preference)
             }
-        } catch {
-            self.error = error
-            self.isShowError = true
+            do {
+                try await session?.connect {
+                    Task { @MainActor in
+                        self.isShowError = true
+                    }
+                }
+            } catch {
+                self.error = error
+                self.isShowError = true
+            }
         }
     }
 
-    func stop() async {
-        do {
-            try await session?.close()
-        } catch {
-            logger.error(error)
+    func stop() {
+        Task {
+            do {
+                try await session?.close()
+            } catch {
+                logger.error(error)
+            }
         }
     }
 
-    func makeSession(_ preference: PreferenceViewModel) async {
+    private func makeSession(_ preference: PreferenceViewModel) async {
         do {
             session = try await SessionBuilderFactory.shared.make(preference.makeURL())
                 .setMethod(.playback)

@@ -10,6 +10,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
     let ssrc: UInt32
     let payloadType: UInt8
     weak var delegate: T?
+    var formatParameter = RTPFormatParameter()
     private var sequenceNumber: UInt16 = 0
     private var buffer = Data()
     private var nalUnitReader = NALUnitReader()
@@ -203,7 +204,7 @@ final class RTPH264Packetizer<T: RTPPacketizerDelegate>: RTPPacketizer {
         guard formatDescription != nil else {
             return nil
         }
-        let presentationTimeStamp = self.timestamp.convert(timestamp)
+        let presentationTimeStamp: CMTime = self.timestamp.convert(timestamp)
         let units = nalUnitReader.read(&buffer, type: H264NALUnit.self)
         var blockBuffer: CMBlockBuffer?
         ISOTypeBufferUtil.toNALFileFormat(&buffer)

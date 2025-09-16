@@ -6,6 +6,7 @@ import libdatachannel
 protocol RTCTrackDelegate: AnyObject {
     func track(_ track: RTCTrack, didSetOpen open: Bool)
     func track(_ track: RTCTrack, didOutput buffer: CMSampleBuffer)
+    func track(_ track: RTCTrack, didOutput buffer: AVAudioCompressedBuffer, when: AVAudioTime)
 }
 
 final class RTCTrack: RTCChannel {
@@ -106,6 +107,14 @@ final class RTCTrack: RTCChannel {
         default:
             break
         }
+        for attribute in description.attributes {
+            switch attribute {
+            case .fmtp(_, let params):
+                result?.formatParameter = RTPFormatParameter(params)
+            default:
+                break
+            }
+        }
         return result
     }
 }
@@ -114,5 +123,9 @@ extension RTCTrack: RTPPacketizerDelegate {
     // MARK: RTPPacketizerDelegate
     func packetizer(_ packetizer: some RTPPacketizer, didOutput buffer: CMSampleBuffer) {
         delegate?.track(self, didOutput: buffer)
+    }
+
+    func packetizer(_ packetizer: some RTPPacketizer, didOutput buffer: AVAudioCompressedBuffer, when: AVAudioTime) {
+        delegate?.track(self, didOutput: buffer, when: when)
     }
 }

@@ -3,6 +3,7 @@ import CoreMedia
 
 protocol RTPPacketizerDelegate: AnyObject {
     func packetizer(_ packetizer: some RTPPacketizer, didOutput buffer: CMSampleBuffer)
+    func packetizer(_ packetizer: some RTPPacketizer, didOutput buffer: AVAudioCompressedBuffer, when: AVAudioTime)
 }
 
 protocol RTPPacketizer {
@@ -10,6 +11,7 @@ protocol RTPPacketizer {
 
     var delegate: T? { get set }
     var ssrc: UInt32 { get }
+    var formatParameter: RTPFormatParameter { get set }
 
     func append(_ packet: RTPPacket)
 
