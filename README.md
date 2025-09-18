@@ -39,7 +39,7 @@ Sponsor: [$50 per month](https://github.com/sponsors/shogo4405): Technical suppo
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |13.0+|13.0+|10.15+|14.0+|1.0+|-|
 
-- SRTHaishinKit and RTCHaishinKit are not avaliable for Mac Catalyst. 
+- SRTHaishinKit is not avaliable for Mac Catalyst. 
 
 ## 📖 Getting Started
 
