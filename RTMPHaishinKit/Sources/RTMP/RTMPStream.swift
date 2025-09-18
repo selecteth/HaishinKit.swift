@@ -561,11 +561,11 @@ public actor RTMPStream {
             case "onStatus":
                 switch response.status?.level {
                 case "status":
+                    // During playback, only NetStream.Play.Start is awaited, as it follows the next sequence.
+                    // 1. NetStream.Play.Rest
+                    // 2. NetStream.Play.Start
                     if let code = response.status?.code, expectedResponse?.rawValue == code {
                         continuation?.resume(returning: response)
-                        continuation = nil
-                    } else {
-                        continuation?.resume(throwing: Error.requestFailed(response: response))
                         continuation = nil
                     }
                 default:
