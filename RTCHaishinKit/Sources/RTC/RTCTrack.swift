@@ -81,7 +81,7 @@ final class RTCTrack: RTCChannel {
             let packet = try RTPPacket(message)
             packetizer?.append(packet)
         } catch {
-            logger.warn(error, message.bytes)
+            logger.warn(error)
         }
     }
 
