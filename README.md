@@ -32,12 +32,13 @@ Sponsor: [$50 per month](https://github.com/sponsors/shogo4405): Technical suppo
 ### Development
 |Version|Xcode|Swift|
 |:----:|:----:|:----:|
+|2.2.0+|26.0+|6.0+|
 |2.1.0+|16.4+|6.0+|
 
 ### OS
 |iOS|tvOS|macOS|visionOS|Mac Catalyst|watchOS|
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|13.0+|13.0+|10.15+|14.0+|1.0+|-|
+|15.0+|15.0+|11.0+|1.0+|14.0+|-|
 
 - SRTHaishinKit is not avaliable for Mac Catalyst. 
 

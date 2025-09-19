@@ -16,10 +16,10 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "HaishinKit",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v15),
+        .tvOS(.v15),
         .visionOS(.v1),
-        .macOS(.v10_15),
+        .macOS(.v11),
         .macCatalyst(.v14)
     ],
     products: [
