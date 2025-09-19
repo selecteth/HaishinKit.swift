@@ -19,13 +19,13 @@ actor HTTPSession: Session {
     private var location: URL?
     private var maxRetryCount: Int = 0
     private var _stream = MediaStream()
-    private var method: SessionMethod
+    private var method: SessionMode
     private lazy var peerConnection: RTCPeerConnection = makePeerConnection()
 
-    init(uri: URL, method: SessionMethod) {
+    init(uri: URL, mode: SessionMode, configuration: (any SessionConfiguration)?) {
         logger.level = .debug
         self.uri = uri
-        self.method = method
+        self.method = mode
     }
 
     func setMaxRetryCount(_ maxRetryCount: Int) {
@@ -39,7 +39,7 @@ actor HTTPSession: Session {
         _readyState.value = .connecting
         peerConnection = makePeerConnection()
         switch method {
-        case .ingest:
+        case .publish:
             try await _stream.setAudioSettings(.init(format: .opus))
             await _stream.tracks.forEach { track in
                 peerConnection.addTrack(track)
@@ -102,7 +102,7 @@ actor HTTPSession: Session {
     }
 
     private func makePeerConnection() -> RTCPeerConnection {
-        let conneciton = RTCPeerConnection(RTCConfiguration(iceServers: []))
+        let conneciton = RTCPeerConnection(RTCConfiguration())
         conneciton.delegate = self
         return conneciton
     }
@@ -116,7 +116,7 @@ extension HTTPSession: RTCPeerConnectionDelegate {
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState) {
         Task {
             if state == .connected {
-                if await method == .ingest {
+                if await method == .publish {
                     await _stream.setDirection(.sendonly)
                 }
             }

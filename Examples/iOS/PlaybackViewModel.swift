@@ -40,7 +40,7 @@ final class PlaybackViewModel: ObservableObject {
     func makeSession() async {
         do {
             session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL())
-                .setMethod(.playback)
+                .setMode(.playback)
                 .build()
             await session?.setMaxRetryCount(0)
             guard let session else {
