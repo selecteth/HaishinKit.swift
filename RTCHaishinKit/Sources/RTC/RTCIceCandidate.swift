@@ -1,11 +1,11 @@
 import Foundation
 
-struct RTCICECandidate: Sendable {
+struct RTCIceCandidate: Sendable {
     let candidate: String
     let mid: String
 }
 
-extension RTCICECandidate {
+extension RTCIceCandidate {
     init(candidate: UnsafePointer<CChar>?, mid: UnsafePointer<CChar>?) {
         if let candidate {
             self.candidate = String(cString: candidate)
