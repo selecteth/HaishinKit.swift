@@ -69,7 +69,7 @@ final class PublishViewModel: ObservableObject {
         // Make session.
         do {
             session = try await SessionBuilderFactory.shared.make(preference.makeURL())
-                .setMethod(.ingest)
+                .setMode(.publish)
                 .build()
             guard let session else {
                 return
