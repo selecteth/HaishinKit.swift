@@ -5,7 +5,7 @@ protocol RTCPeerConnectionDelegate: AnyObject {
     func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState)
     func peerConnection(_ peerConnection: RTCPeerConnection, didSet gatheringState: RTCGatheringState)
     func peerConnection(_ peerConnection: RTCPeerConnection, didReceive track: RTCTrack)
-    func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCICECandidate)
+    func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCIceCandidate)
 }
 
 final class RTCPeerConnection {
@@ -38,8 +38,8 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
         }
     }
     private(set) var tracks: [RTCTrack] = []
-    private(set) var iceState: RTCICEState = .new
-    private(set) var candidates: [RTCICECandidate] = []
+    private(set) var iceState: RTCIceState = .new
+    private(set) var candidates: [RTCIceCandidate] = []
     private(set) var signalingState: RTCSignalingState = .stable
     private(set) var gatheringState: RTCGatheringState = .new {
         didSet {
@@ -48,7 +48,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
     }
     private(set) var localDescription: String = ""
 
-    init(_ config: RTCConfiguration) {
+    init(_ config: some RTCConfigurationConvertible) {
         connection = config.createPeerConnection()
         rtcSetUserPointer(connection, Unmanaged.passUnretained(self).toOpaque())
         rtcSetLocalDescriptionCallback(connection) { _, sdp, _, pointer in
@@ -152,7 +152,7 @@ a=fmtp:98 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f
         }
     }
 
-    private func didGenerateCandidate(_ candidated: RTCICECandidate) {
+    private func didGenerateCandidate(_ candidated: RTCIceCandidate) {
         candidates.append(candidated)
         delegate?.peerConnection(self, didGenerate: candidated)
     }

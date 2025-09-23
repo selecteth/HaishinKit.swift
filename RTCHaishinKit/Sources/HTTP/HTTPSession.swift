@@ -19,13 +19,17 @@ actor HTTPSession: Session {
     private var location: URL?
     private var maxRetryCount: Int = 0
     private var _stream = MediaStream()
-    private var method: SessionMode
+    private var mode: SessionMode
+    private var configuration: HTTPSessionConfiguration?
     private lazy var peerConnection: RTCPeerConnection = makePeerConnection()
 
     init(uri: URL, mode: SessionMode, configuration: (any SessionConfiguration)?) {
         logger.level = .debug
         self.uri = uri
-        self.method = mode
+        self.mode = mode
+        if let configuration = configuration as? HTTPSessionConfiguration {
+            self.configuration = configuration
+        }
     }
 
     func setMaxRetryCount(_ maxRetryCount: Int) {
@@ -38,7 +42,7 @@ actor HTTPSession: Session {
         }
         _readyState.value = .connecting
         peerConnection = makePeerConnection()
-        switch method {
+        switch mode {
         case .publish:
             try await _stream.setAudioSettings(.init(format: .opus))
             await _stream.tracks.forEach { track in
@@ -102,7 +106,11 @@ actor HTTPSession: Session {
     }
 
     private func makePeerConnection() -> RTCPeerConnection {
-        let conneciton = RTCPeerConnection(RTCConfiguration())
+        let conneciton = if let configuration {
+            RTCPeerConnection(configuration)
+        } else {
+            RTCPeerConnection(RTCConfiguration())
+        }
         conneciton.delegate = self
         return conneciton
     }
@@ -116,7 +124,7 @@ extension HTTPSession: RTCPeerConnectionDelegate {
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didSet state: RTCState) {
         Task {
             if state == .connected {
-                if await method == .publish {
+                if await mode == .publish {
                     await _stream.setDirection(.sendonly)
                 }
             }
@@ -126,6 +134,6 @@ extension HTTPSession: RTCPeerConnectionDelegate {
     nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didReceive track: RTCTrack) {
     }
 
-    nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCICECandidate) {
+    nonisolated func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidated: RTCIceCandidate) {
     }
 }

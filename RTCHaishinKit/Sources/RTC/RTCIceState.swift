@@ -1,6 +1,6 @@
 import libdatachannel
 
-enum RTCICEState: Sendable {
+enum RTCIceState: Sendable {
     case new
     case checking
     case connected
@@ -10,7 +10,7 @@ enum RTCICEState: Sendable {
     case closed
 }
 
-extension RTCICEState {
+extension RTCIceState {
     init?(cValue: rtcIceState) {
         switch cValue {
         case RTC_ICE_NEW:
