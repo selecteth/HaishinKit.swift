@@ -90,7 +90,6 @@
 		BC9129382D12EA820077EFF3 /* Preference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
 		BC912A7F2D12F0830077EFF3 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/XROS.platform/Developer/SDKs/XROS2.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		BC912A802D12F0900077EFF3 /* libc++.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.1.tbd"; path = "Platforms/XROS.platform/Developer/SDKs/XROS2.1.sdk/usr/lib/libc++.1.tbd"; sourceTree = DEVELOPER_DIR; };
-		BCB798892CE06AEC0059DFE9 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCD5C7F82E3F189700A69F16 /* Screencast.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Screencast.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCD5C7F92E3F189700A69F16 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		BCD916432D3A934400D30743 /* HaishinKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = HaishinKit; path = ../; sourceTree = SOURCE_ROOT; };
@@ -184,13 +183,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BCB798862CE06AEC0059DFE9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BCD5C7F52E3F189700A69F16 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -236,7 +228,6 @@
 			children = (
 				29D3D4EF1ED0531500DD4AA6 /* Example tvOS.app */,
 				BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */,
-				BCB798892CE06AEC0059DFE9 /* Tests.xctest */,
 				BC6841622E3CFBE0008FBFEE /* Example iOS.app */,
 				BCD5C7F82E3F189700A69F16 /* Screencast.appex */,
 				BCFE627E2E770A9900941209 /* Example macOS.app */,
@@ -340,25 +331,6 @@
 			productReference = BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BCB798882CE06AEC0059DFE9 /* Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCB798912CE06AEC0059DFE9 /* Build configuration list for PBXNativeTarget "Tests" */;
-			buildPhases = (
-				BCB798852CE06AEC0059DFE9 /* Sources */,
-				BCB798862CE06AEC0059DFE9 /* Frameworks */,
-				BCB798872CE06AEC0059DFE9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Tests;
-			packageProductDependencies = (
-			);
-			productName = Tests;
-			productReference = BCB798892CE06AEC0059DFE9 /* Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		BCD5C7F72E3F189700A69F16 /* Screencast */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCD5C8032E3F189700A69F16 /* Build configuration list for PBXNativeTarget "Screencast" */;
@@ -430,10 +402,6 @@
 					BC7A0E3C2B088FA7005FB2F7 = {
 						CreatedOnToolsVersion = 15.1;
 					};
-					BCB798882CE06AEC0059DFE9 = {
-						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 29C9327D1CD76FB800283FC5;
-					};
 					BCD5C7F72E3F189700A69F16 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -471,7 +439,6 @@
 				BCFE627D2E770A9900941209 /* Example macOS */,
 				29D3D4EE1ED0531500DD4AA6 /* Example tvOS */,
 				BC7A0E3C2B088FA7005FB2F7 /* Example visionOS */,
-				BCB798882CE06AEC0059DFE9 /* Tests */,
 				BCD5C7F72E3F189700A69F16 /* Screencast */,
 			);
 		};
@@ -493,13 +460,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC7A0E3B2B088FA7005FB2F7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB798872CE06AEC0059DFE9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -565,13 +525,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC91298C2D12EB5E0077EFF3 /* Preference.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCB798852CE06AEC0059DFE9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -994,75 +947,6 @@
 			};
 			name = Release;
 		};
-		BCB7988F2CE06AEC0059DFE9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.haishinkit.Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example iOS";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Debug;
-		};
-		BCB798902CE06AEC0059DFE9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.haishinkit.Tests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example iOS";
-				XROS_DEPLOYMENT_TARGET = 2.1;
-			};
-			name = Release;
-		};
 		BCD5C8042E3F189700A69F16 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1264,15 +1148,6 @@
 			buildConfigurations = (
 				BC7A0E522B088FA9005FB2F7 /* Debug */,
 				BC7A0E532B088FA9005FB2F7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BCB798912CE06AEC0059DFE9 /* Build configuration list for PBXNativeTarget "Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCB7988F2CE06AEC0059DFE9 /* Debug */,
-				BCB798902CE06AEC0059DFE9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -12,6 +12,6 @@ import Testing
             try await connection.close()
             weakConnection = connection
         }()
-        // #expect(weakConnection == nil)
+        #expect(weakConnection == nil)
     }
 }
