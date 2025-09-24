@@ -44,6 +44,15 @@ struct PreferenceView: View {
                 Text("Video Codec Settings")
             }
             Section {
+                Picker("View Type", selection: $model.viewType) {
+                    ForEach(ViewType.allCases, id: \.self) { view in
+                        Text("\(view)").tag(view)
+                    }
+                }
+            } header: {
+                Text("Others")
+            }
+            Section {
                 Button(action: {
                     model.showPublishSheet.toggle()
                 }, label: {

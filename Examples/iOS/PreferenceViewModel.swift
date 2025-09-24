@@ -1,6 +1,13 @@
 import HaishinKit
 import SwiftUI
 
+enum ViewType: String, CaseIterable, Identifiable {
+    case metal
+    case pip
+
+    var id: Self { self }
+}
+
 @MainActor
 final class PreferenceViewModel: ObservableObject {
     @Published var showPublishSheet: Bool = false
@@ -16,6 +23,9 @@ final class PreferenceViewModel: ObservableObject {
     // MARK: - VideoCodecSettings.
     @Published var bitRateMode: VideoCodecSettings.BitRateMode = .average
     var isLowLatencyRateControlEnabled: Bool = false
+
+    // MARK: - Others
+    @Published var viewType: ViewType = .metal
 
     init() {
         if #available(iOS 16.0, *) {
