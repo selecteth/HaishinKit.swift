@@ -5,6 +5,8 @@ import RTMPHaishinKit
 import SRTHaishinKit
 import SwiftUI
 
+nonisolated let logger = LBLogger.with("com.haishinkit.HaishinApp")
+
 @main
 struct HaishinApp: App {
     @State private var preference = PreferenceViewModel()

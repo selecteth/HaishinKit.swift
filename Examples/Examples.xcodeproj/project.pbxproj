@@ -10,6 +10,14 @@
 		BC05F96E2E3D248A002BCC92 /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9129382D12EA820077EFF3 /* Preference.swift */; };
 		BC33A1212CDF525B0016EEA0 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC33A1202CDF525B0016EEA0 /* HaishinKit */; };
 		BC33A1232CDF525B0016EEA0 /* SRTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC33A1222CDF525B0016EEA0 /* SRTHaishinKit */; };
+		BC4B7DCD2E86D06700973BD7 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD5C7F92E3F189700A69F16 /* ReplayKit.framework */; };
+		BC4B7DD42E86D06700973BD7 /* Screencast.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BC4B7DCC2E86D06700973BD7 /* Screencast.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BC4B7DE02E86D13C00973BD7 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC4B7DDF2E86D13C00973BD7 /* HaishinKit */; };
+		BC4B7DE22E86D13C00973BD7 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC4B7DE12E86D13C00973BD7 /* MoQTHaishinKit */; };
+		BC4B7DE42E86D13C00973BD7 /* RTCHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC4B7DE32E86D13C00973BD7 /* RTCHaishinKit */; };
+		BC4B7DE62E86D13C00973BD7 /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC4B7DE52E86D13C00973BD7 /* RTMPHaishinKit */; };
+		BC4B7DE82E86D13C00973BD7 /* SRTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC4B7DE72E86D13C00973BD7 /* SRTHaishinKit */; };
+		BC4B7DE92E86D14A00973BD7 /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9129382D12EA820077EFF3 /* Preference.swift */; };
 		BC6842B62E3D1294008FBFEE /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC6842B52E3D1294008FBFEE /* HaishinKit */; };
 		BC6842B82E3D1294008FBFEE /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC6842B72E3D1294008FBFEE /* MoQTHaishinKit */; };
 		BC6842BA2E3D1294008FBFEE /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC6842B92E3D1294008FBFEE /* RTMPHaishinKit */; };
@@ -19,12 +27,6 @@
 		BC912A812D12F10C0077EFF3 /* libc++.1.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BC912A802D12F0900077EFF3 /* libc++.1.tbd */; };
 		BC912DDD2D185D360077EFF3 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BC912DDC2D185D360077EFF3 /* MoQTHaishinKit */; };
 		BCD2478C2E54C04E00C64280 /* RTCHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD2478B2E54C04E00C64280 /* RTCHaishinKit */; };
-		BCD5C7FA2E3F189700A69F16 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCD5C7F92E3F189700A69F16 /* ReplayKit.framework */; };
-		BCD5C8012E3F189700A69F16 /* Screencast.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BCD5C7F82E3F189700A69F16 /* Screencast.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BCD5C8722E3F1D0B00A69F16 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD5C8712E3F1D0B00A69F16 /* HaishinKit */; };
-		BCD5C8742E3F1D0B00A69F16 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD5C8732E3F1D0B00A69F16 /* MoQTHaishinKit */; };
-		BCD5C8762E3F1D0B00A69F16 /* RTMPHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD5C8752E3F1D0B00A69F16 /* RTMPHaishinKit */; };
-		BCD5C8782E3F1D0B00A69F16 /* SRTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD5C8772E3F1D0B00A69F16 /* SRTHaishinKit */; };
 		BCD917072D3A94BC00D30743 /* HaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD917062D3A94BC00D30743 /* HaishinKit */; };
 		BCD917092D3A94BC00D30743 /* MoQTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD917082D3A94BC00D30743 /* MoQTHaishinKit */; };
 		BCD9170B2D3A94BC00D30743 /* SRTHaishinKit in Frameworks */ = {isa = PBXBuildFile; productRef = BCD9170A2D3A94BC00D30743 /* SRTHaishinKit */; };
@@ -38,11 +40,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BCD5C7FF2E3F189700A69F16 /* PBXContainerItemProxy */ = {
+		BC4B7DD22E86D06700973BD7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2945CBB41B4BE66000104112 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BCD5C7F72E3F189700A69F16;
+			remoteGlobalIDString = BC4B7DCB2E86D06700973BD7;
 			remoteInfo = Screencast;
 		};
 /* End PBXContainerItemProxy section */
@@ -74,7 +76,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				BCD5C8012E3F189700A69F16 /* Screencast.appex in Embed Foundation Extensions */,
+				BC4B7DD42E86D06700973BD7 /* Screencast.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,6 +85,7 @@
 
 /* Begin PBXFileReference section */
 		29D3D4EF1ED0531500DD4AA6 /* Example tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC4B7DCC2E86D06700973BD7 /* Screencast.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Screencast.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC6841622E3CFBE0008FBFEE /* Example iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example visionOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC91287D2D12E7540077EFF3 /* Examples.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Examples.xcodeproj; sourceTree = "<group>"; };
@@ -90,7 +93,6 @@
 		BC9129382D12EA820077EFF3 /* Preference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
 		BC912A7F2D12F0830077EFF3 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/XROS.platform/Developer/SDKs/XROS2.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		BC912A802D12F0900077EFF3 /* libc++.1.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.1.tbd"; path = "Platforms/XROS.platform/Developer/SDKs/XROS2.1.sdk/usr/lib/libc++.1.tbd"; sourceTree = DEVELOPER_DIR; };
-		BCD5C7F82E3F189700A69F16 /* Screencast.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Screencast.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCD5C7F92E3F189700A69F16 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		BCD916432D3A934400D30743 /* HaishinKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = HaishinKit; path = ../; sourceTree = SOURCE_ROOT; };
 		BCFE627E2E770A9900941209 /* Example macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +107,21 @@
 				VisualEffect.swift,
 			);
 			target = BCFE627D2E770A9900941209 /* Example macOS */;
+		};
+		BC4B7DDD2E86D06E00973BD7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Screencast/Info.plist,
+				Screencast/SampleHandler.swift,
+			);
+			target = BC6841612E3CFBE0008FBFEE /* Example iOS */;
+		};
+		BC4B7DDE2E86D06E00973BD7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Screencast/SampleHandler.swift,
+			);
+			target = BC4B7DCB2E86D06700973BD7 /* Screencast */;
 		};
 		BC912A6D2D12EFB10077EFF3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -131,17 +148,10 @@
 			);
 			target = BC7A0E3C2B088FA7005FB2F7 /* Example visionOS */;
 		};
-		BCFB36002E3F221E0073D59D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Screencast/Info.plist,
-			);
-			target = BC6841612E3CFBE0008FBFEE /* Example iOS */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BC6841632E3CFBE0008FBFEE /* iOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BCFB36002E3F221E0073D59D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BC36B4F82E77201200AADEC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BCABAC0D2E65BBBC00B0E878 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = iOS; sourceTree = "<group>"; };
+		BC6841632E3CFBE0008FBFEE /* iOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BC4B7DDD2E86D06E00973BD7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BC36B4F82E77201200AADEC1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BCABAC0D2E65BBBC00B0E878 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, BC4B7DDE2E86D06E00973BD7 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = iOS; sourceTree = "<group>"; };
 		BC91296B2D12EA910077EFF3 /* tvOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BC912A6D2D12EFB10077EFF3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tvOS; sourceTree = "<group>"; };
 		BC9129712D12EA930077EFF3 /* visionOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BC912A722D12F0100077EFF3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = visionOS; sourceTree = "<group>"; };
 		BCFE627F2E770A9900941209 /* macOS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = macOS; sourceTree = "<group>"; };
@@ -156,6 +166,19 @@
 				BCEC2BBE2E104D9100422F8F /* RTMPHaishinKit in Frameworks */,
 				BC33A1232CDF525B0016EEA0 /* SRTHaishinKit in Frameworks */,
 				BC33A1212CDF525B0016EEA0 /* HaishinKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC4B7DC92E86D06700973BD7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC4B7DE22E86D13C00973BD7 /* MoQTHaishinKit in Frameworks */,
+				BC4B7DE62E86D13C00973BD7 /* RTMPHaishinKit in Frameworks */,
+				BC4B7DE82E86D13C00973BD7 /* SRTHaishinKit in Frameworks */,
+				BC4B7DE02E86D13C00973BD7 /* HaishinKit in Frameworks */,
+				BC4B7DE42E86D13C00973BD7 /* RTCHaishinKit in Frameworks */,
+				BC4B7DCD2E86D06700973BD7 /* ReplayKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,18 +203,6 @@
 				BCD917072D3A94BC00D30743 /* HaishinKit in Frameworks */,
 				BCD9170B2D3A94BC00D30743 /* SRTHaishinKit in Frameworks */,
 				BC912A812D12F10C0077EFF3 /* libc++.1.tbd in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCD5C7F52E3F189700A69F16 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BCD5C8742E3F1D0B00A69F16 /* MoQTHaishinKit in Frameworks */,
-				BCD5C8782E3F1D0B00A69F16 /* SRTHaishinKit in Frameworks */,
-				BCD5C8762E3F1D0B00A69F16 /* RTMPHaishinKit in Frameworks */,
-				BCD5C8722E3F1D0B00A69F16 /* HaishinKit in Frameworks */,
-				BCD5C7FA2E3F189700A69F16 /* ReplayKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,8 +240,8 @@
 				29D3D4EF1ED0531500DD4AA6 /* Example tvOS.app */,
 				BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */,
 				BC6841622E3CFBE0008FBFEE /* Example iOS.app */,
-				BCD5C7F82E3F189700A69F16 /* Screencast.appex */,
 				BCFE627E2E770A9900941209 /* Example macOS.app */,
+				BC4B7DCC2E86D06700973BD7 /* Screencast.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -278,6 +289,30 @@
 			productReference = 29D3D4EF1ED0531500DD4AA6 /* Example tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		BC4B7DCB2E86D06700973BD7 /* Screencast */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC4B7DD62E86D06700973BD7 /* Build configuration list for PBXNativeTarget "Screencast" */;
+			buildPhases = (
+				BC4B7DC82E86D06700973BD7 /* Sources */,
+				BC4B7DC92E86D06700973BD7 /* Frameworks */,
+				BC4B7DCA2E86D06700973BD7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Screencast;
+			packageProductDependencies = (
+				BC4B7DDF2E86D13C00973BD7 /* HaishinKit */,
+				BC4B7DE12E86D13C00973BD7 /* MoQTHaishinKit */,
+				BC4B7DE32E86D13C00973BD7 /* RTCHaishinKit */,
+				BC4B7DE52E86D13C00973BD7 /* RTMPHaishinKit */,
+				BC4B7DE72E86D13C00973BD7 /* SRTHaishinKit */,
+			);
+			productName = Screencast;
+			productReference = BC4B7DCC2E86D06700973BD7 /* Screencast.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BC6841612E3CFBE0008FBFEE /* Example iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BC68416B2E3CFBE2008FBFEE /* Build configuration list for PBXNativeTarget "Example iOS" */;
@@ -290,7 +325,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				BCD5C8002E3F189700A69F16 /* PBXTargetDependency */,
+				BC4B7DD32E86D06700973BD7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BC6841632E3CFBE0008FBFEE /* iOS */,
@@ -330,29 +365,6 @@
 			productName = "Example visionOS";
 			productReference = BC7A0E3D2B088FA7005FB2F7 /* Example visionOS.app */;
 			productType = "com.apple.product-type.application";
-		};
-		BCD5C7F72E3F189700A69F16 /* Screencast */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCD5C8032E3F189700A69F16 /* Build configuration list for PBXNativeTarget "Screencast" */;
-			buildPhases = (
-				BCD5C7F42E3F189700A69F16 /* Sources */,
-				BCD5C7F52E3F189700A69F16 /* Frameworks */,
-				BCD5C7F62E3F189700A69F16 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Screencast;
-			packageProductDependencies = (
-				BCD5C8712E3F1D0B00A69F16 /* HaishinKit */,
-				BCD5C8732E3F1D0B00A69F16 /* MoQTHaishinKit */,
-				BCD5C8752E3F1D0B00A69F16 /* RTMPHaishinKit */,
-				BCD5C8772E3F1D0B00A69F16 /* SRTHaishinKit */,
-			);
-			productName = Screencast;
-			productReference = BCD5C7F82E3F189700A69F16 /* Screencast.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 		BCFE627D2E770A9900941209 /* Example macOS */ = {
 			isa = PBXNativeTarget;
@@ -396,14 +408,14 @@
 						CreatedOnToolsVersion = 8.3.2;
 						LastSwiftMigration = 1020;
 					};
+					BC4B7DCB2E86D06700973BD7 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					BC6841612E3CFBE0008FBFEE = {
 						CreatedOnToolsVersion = 16.4;
 					};
 					BC7A0E3C2B088FA7005FB2F7 = {
 						CreatedOnToolsVersion = 15.1;
-					};
-					BCD5C7F72E3F189700A69F16 = {
-						CreatedOnToolsVersion = 16.4;
 					};
 					BCFE627D2E770A9900941209 = {
 						CreatedOnToolsVersion = 16.4;
@@ -439,13 +451,20 @@
 				BCFE627D2E770A9900941209 /* Example macOS */,
 				29D3D4EE1ED0531500DD4AA6 /* Example tvOS */,
 				BC7A0E3C2B088FA7005FB2F7 /* Example visionOS */,
-				BCD5C7F72E3F189700A69F16 /* Screencast */,
+				BC4B7DCB2E86D06700973BD7 /* Screencast */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		29D3D4ED1ED0531500DD4AA6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC4B7DCA2E86D06700973BD7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -460,13 +479,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BC7A0E3B2B088FA7005FB2F7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCD5C7F62E3F189700A69F16 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -512,6 +524,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC4B7DC82E86D06700973BD7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC4B7DE92E86D14A00973BD7 /* Preference.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC68415E2E3CFBE0008FBFEE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -528,13 +548,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BCD5C7F42E3F189700A69F16 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BCFE627A2E770A9900941209 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -546,10 +559,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BCD5C8002E3F189700A69F16 /* PBXTargetDependency */ = {
+		BC4B7DD32E86D06700973BD7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BCD5C7F72E3F189700A69F16 /* Screencast */;
-			targetProxy = BCD5C7FF2E3F189700A69F16 /* PBXContainerItemProxy */;
+			target = BC4B7DCB2E86D06700973BD7 /* Screencast */;
+			targetProxy = BC4B7DD22E86D06700973BD7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -753,6 +766,87 @@
 			};
 			name = Release;
 		};
+		BC4B7DD72E86D06700973BD7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOS/Screencast/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HaishinKit;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haishinkit.Example-iOS.Screencast";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BC4B7DD82E86D06700973BD7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = iOS/Screencast/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HaishinKit;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.haishinkit.Example-iOS.Screencast";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BC68416C2E3CFBE2008FBFEE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -947,87 +1041,6 @@
 			};
 			name = Release;
 		};
-		BCD5C8042E3F189700A69F16 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iOS/Screencast/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Screencast;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haishinkit.Example-iOS.Screencast";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		BCD5C8052E3F189700A69F16 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SUEQ2SZ2L5;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iOS/Screencast/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Screencast;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.haishinkit.Example-iOS.Screencast";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		BCFE62882E770A9C00941209 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1134,6 +1147,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		BC4B7DD62E86D06700973BD7 /* Build configuration list for PBXNativeTarget "Screencast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC4B7DD72E86D06700973BD7 /* Debug */,
+				BC4B7DD82E86D06700973BD7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BC68416B2E3CFBE2008FBFEE /* Build configuration list for PBXNativeTarget "Example iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1148,15 +1170,6 @@
 			buildConfigurations = (
 				BC7A0E522B088FA9005FB2F7 /* Debug */,
 				BC7A0E532B088FA9005FB2F7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BCD5C8032E3F189700A69F16 /* Build configuration list for PBXNativeTarget "Screencast" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCD5C8042E3F189700A69F16 /* Debug */,
-				BCD5C8052E3F189700A69F16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1194,6 +1207,26 @@
 			package = BC33A1172CDF51620016EEA0 /* XCLocalSwiftPackageReference "../HaishinKit.swift" */;
 			productName = SRTHaishinKit;
 		};
+		BC4B7DDF2E86D13C00973BD7 /* HaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HaishinKit;
+		};
+		BC4B7DE12E86D13C00973BD7 /* MoQTHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoQTHaishinKit;
+		};
+		BC4B7DE32E86D13C00973BD7 /* RTCHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTCHaishinKit;
+		};
+		BC4B7DE52E86D13C00973BD7 /* RTMPHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RTMPHaishinKit;
+		};
+		BC4B7DE72E86D13C00973BD7 /* SRTHaishinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SRTHaishinKit;
+		};
 		BC6842B52E3D1294008FBFEE /* HaishinKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HaishinKit;
@@ -1218,22 +1251,6 @@
 		BCD2478B2E54C04E00C64280 /* RTCHaishinKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RTCHaishinKit;
-		};
-		BCD5C8712E3F1D0B00A69F16 /* HaishinKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = HaishinKit;
-		};
-		BCD5C8732E3F1D0B00A69F16 /* MoQTHaishinKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MoQTHaishinKit;
-		};
-		BCD5C8752E3F1D0B00A69F16 /* RTMPHaishinKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RTMPHaishinKit;
-		};
-		BCD5C8772E3F1D0B00A69F16 /* SRTHaishinKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SRTHaishinKit;
 		};
 		BCD917062D3A94BC00D30743 /* HaishinKit */ = {
 			isa = XCSwiftPackageProductDependency;

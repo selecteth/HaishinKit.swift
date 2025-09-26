@@ -6,7 +6,7 @@ import RTMPHaishinKit
 import SRTHaishinKit
 import VideoToolbox
 
-nonisolated let logger = LBLogger.with(kHaishinKitIdentifier)
+nonisolated let logger = LBLogger.with("com.haishinkit.Screencast")
 
 @available(iOS 10.0, *)
 final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
@@ -62,6 +62,7 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
                 videoSetting.mode = .passthrough
                 await session?.stream.setVideoInputBufferCounts(5)
                 await mixer.setVideoMixerSettings(videoSetting)
+                await mixer.startRunning()
                 if let session {
                     await mixer.addOutput(session.stream)
                     try? await session.connect {
