@@ -65,11 +65,14 @@ Task {
 ```
 
 #### Make Session
+**RTMP**
+Please provide the RTMP connection URL combined with the streamName.
 ```swift
-let session = try await SessionBuilderFactory.shared.make(URL(string: "rtmp://hostname/live/live"))
+let session = try await SessionBuilderFactory.shared.make(URL(string: "rtmp://hostname/appName/stramName"))
   .setMode(.ingest)
   .build()
 ```
+**SRT**
 ```swift
 let session = try await SessionBuilderFactory.shared.make(URL(string: "srt://hostname:448?stream=xxxxx"))
   .setMode(.playback)
