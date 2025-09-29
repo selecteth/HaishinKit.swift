@@ -45,7 +45,7 @@ struct PublishView: View {
     var body: some View {
         ZStack {
             VStack {
-                if (preference.viewType == .pip) {
+                if preference.viewType == .pip {
                     PiPHKViewRepresentable(previewSource: model)
                 } else {
                     MTHKViewRepresentable(previewSource: model)

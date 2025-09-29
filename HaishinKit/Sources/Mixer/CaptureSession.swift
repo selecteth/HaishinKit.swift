@@ -22,44 +22,22 @@ protocol CaptureSessionConvertible: Runner {
     func startRunningIfNeeded()
 }
 
-final class CaptureSession: CaptureSessionConvertible {
-    #if os(iOS) || os(tvOS)
-    static var isMultiCamSupported: Bool {
-        if #available(tvOS 17.0, *) {
-            return AVCaptureMultiCamSession.isMultiCamSupported
-        } else {
-            return false
+#if os(macOS) || os(iOS) || os(visionOS)
+final class CaptureSession {
+    var isMultiCamSessionEnabled: Bool {
+        get {
+            capabilities.isMultiCamSessionEnabled
+        }
+        set {
+            capabilities.isMultiCamSessionEnabled = isMultitaskingCameraAccessEnabled
         }
     }
-    #elseif os(macOS)
-    static let isMultiCamSupported = true
-    #elseif os(visionOS)
-    static let isMultiCamSupported = false
-    #endif
-
-    #if os(iOS) || os(tvOS)
-    var isMultiCamSessionEnabled = false {
-        didSet {
-            if !Self.isMultiCamSupported {
-                isMultiCamSessionEnabled = false
-                logger.info("This device can't support the AVCaptureMultiCamSession.")
-            }
-        }
-    }
-    @available(tvOS 17.0, *)
-    var isMultitaskingCameraAccessEnabled: Bool {
-        return session.isMultitaskingCameraAccessEnabled
-    }
-
-    #elseif os(macOS)
-    var isMultiCamSessionEnabled = true
-    let isMultitaskingCameraAccessEnabled = true
-    #elseif os(visionOS)
-    var isMultiCamSessionEnabled = false
-    let isMultitaskingCameraAccessEnabled = false
-    #endif
 
     private(set) var isRunning = false
+
+    var isMultitaskingCameraAccessEnabled: Bool {
+        capabilities.isMultitaskingCameraAccessEnabled(session)
+    }
 
     var isInturreped: AsyncStream<Bool> {
         AsyncStream { continuation in
@@ -73,13 +51,81 @@ final class CaptureSession: CaptureSessionConvertible {
         }
     }
 
-    #if os(tvOS)
+    #if !os(visionOS)
+    var sessionPreset: AVCaptureSession.Preset = .default {
+        didSet {
+            guard sessionPreset != oldValue, session.canSetSessionPreset(sessionPreset) else {
+                return
+            }
+            session.beginConfiguration()
+            session.sessionPreset = sessionPreset
+            session.commitConfiguration()
+        }
+    }
+    private(set) lazy var session: AVCaptureSession = capabilities.makeSession(sessionPreset)
+    #else
+    private(set) lazy var session = AVCaptureSession()
+    #endif
+
+    private lazy var capabilities = Capabilities()
+
+    private var isInturrepedContinutation: AsyncStream<Bool>.Continuation? {
+        didSet {
+            oldValue?.finish()
+        }
+    }
+
+    private var runtimeErrorContinutation: AsyncStream<AVError>.Continuation? {
+        didSet {
+            oldValue?.finish()
+        }
+    }
+
+    deinit {
+        if session.isRunning {
+            session.stopRunning()
+        }
+    }
+}
+#elseif os(tvOS)
+final class CaptureSession {
+    var isMultiCamSessionEnabled: Bool {
+        get {
+            capabilities.isMultiCamSessionEnabled
+        }
+        set {
+            capabilities.isMultiCamSessionEnabled = isMultitaskingCameraAccessEnabled
+        }
+    }
+
+    private(set) var isRunning = false
+
+    var isMultitaskingCameraAccessEnabled: Bool {
+        if #available(tvOS 17.0, *) {
+            capabilities.isMultitaskingCameraAccessEnabled(session)
+        } else {
+            false
+        }
+    }
+
+    var isInturreped: AsyncStream<Bool> {
+        AsyncStream { continuation in
+            isInturrepedContinutation = continuation
+        }
+    }
+
+    var runtimeError: AsyncStream<AVError> {
+        AsyncStream { continutation in
+            runtimeErrorContinutation = continutation
+        }
+    }
+
     private var _session: Any?
     /// The capture session instance.
     @available(tvOS 17.0, *)
     var session: AVCaptureSession {
         if _session == nil {
-            _session = makeSession()
+            _session = capabilities.makeSession(sessionPreset)
         }
         return _session as! AVCaptureSession
     }
@@ -102,33 +148,6 @@ final class CaptureSession: CaptureSessionConvertible {
             session.commitConfiguration()
         }
     }
-    #elseif os(visionOS)
-    /// The capture session instance.
-    private(set) lazy var session = AVCaptureSession()
-    #else
-    var sessionPreset: AVCaptureSession.Preset = .default {
-        didSet {
-            guard sessionPreset != oldValue, session.canSetSessionPreset(sessionPreset) else {
-                return
-            }
-            session.beginConfiguration()
-            session.sessionPreset = sessionPreset
-            session.commitConfiguration()
-        }
-    }
-
-    /// The capture session instance.
-    private(set) lazy var session: AVCaptureSession = makeSession()
-    #endif
-
-    @available(tvOS 17.0, *)
-    private var isMultiCamSession: Bool {
-        #if os(iOS) || os(tvOS)
-        return session is AVCaptureMultiCamSession
-        #else
-        return true
-        #endif
-    }
 
     private var isInturrepedContinutation: AsyncStream<Bool>.Continuation? {
         didSet {
@@ -142,6 +161,8 @@ final class CaptureSession: CaptureSessionConvertible {
         }
     }
 
+    private lazy var capabilities = Capabilities()
+
     deinit {
         guard #available(tvOS 17.0, *) else {
             return
@@ -150,7 +171,11 @@ final class CaptureSession: CaptureSessionConvertible {
             session.stopRunning()
         }
     }
+}
+#endif
 
+extension CaptureSession: CaptureSessionConvertible {
+    // MARK: CaptureSessionConvertible
     @available(tvOS 17.0, *)
     func configuration(_ lambda: (_ session: AVCaptureSession) throws -> Void ) rethrows {
         session.beginConfiguration()
@@ -216,33 +241,6 @@ final class CaptureSession: CaptureSessionConvertible {
         isRunning = session.isRunning
     }
 
-    #if os(iOS) || os(tvOS)
-    @available(tvOS 17.0, *)
-    private func makeSession() -> AVCaptureSession {
-        let session: AVCaptureSession
-        if isMultiCamSessionEnabled {
-            session = AVCaptureMultiCamSession()
-        } else {
-            session = AVCaptureSession()
-        }
-        if session.canSetSessionPreset(sessionPreset) {
-            session.sessionPreset = sessionPreset
-        }
-        if session.isMultitaskingCameraAccessSupported {
-            session.isMultitaskingCameraAccessEnabled = true
-        }
-        return session
-    }
-    #elseif os(macOS)
-    private func makeSession() -> AVCaptureSession {
-        let session = AVCaptureSession()
-        if session.canSetSessionPreset(sessionPreset) {
-            session.sessionPreset = sessionPreset
-        }
-        return session
-    }
-    #endif
-
     @available(tvOS 17.0, *)
     private func addSessionObservers(_ session: AVCaptureSession) {
         NotificationCenter.default.addObserver(self, selector: #selector(sessionRuntimeError(_:)), name: .AVCaptureSessionRuntimeError, object: session)
@@ -288,7 +286,7 @@ final class CaptureSession: CaptureSessionConvertible {
 }
 
 extension CaptureSession: Runner {
-    // MARK: Running
+    // MARK: Runner
     func startRunning() {
         guard !isRunning else {
             return
@@ -317,8 +315,6 @@ extension CaptureSession: Runner {
 }
 
 final class NullCaptureSession: CaptureSessionConvertible {
-    private(set) var isRunning: Bool = false
-
     #if !os(visionOS)
     @available(tvOS 17.0, *)
     var sessionPreset: AVCaptureSession.Preset {
@@ -330,10 +326,16 @@ final class NullCaptureSession: CaptureSessionConvertible {
     }
     #endif
 
-    @AsyncStreamed(false) var isInturreped: AsyncStream<Bool>
-    @AsyncStreamedFlow var runtimeError: AsyncStream<AVError>
-    var isMultiCamSessionEnabled: Bool = false
-    var isMultitaskingCameraAccessEnabled: Bool = false
+    var isMultiCamSessionEnabled = false
+    let isMultitaskingCameraAccessEnabled = false
+
+    @AsyncStreamed(false)
+    var isInturreped: AsyncStream<Bool>
+
+    @AsyncStreamedFlow
+    var runtimeError: AsyncStream<AVError>
+
+    private(set) var isRunning = false
 
     @available(tvOS 17.0, *)
     func attachCapture(_ capture: (any DeviceUnit)?) {
@@ -349,7 +351,10 @@ final class NullCaptureSession: CaptureSessionConvertible {
 
     func startRunningIfNeeded() {
     }
+}
 
+extension NullCaptureSession: Runner {
+    // MARK: Runner
     func startRunning() {
     }
 
