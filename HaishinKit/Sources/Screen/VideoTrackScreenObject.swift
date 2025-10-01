@@ -74,7 +74,8 @@ public final class VideoTrackScreenObject: ScreenObject, ChromaKeyProcessable {
     }
 
     override public func makeImage(_ renderer: some ScreenRenderer) -> CGImage? {
-        guard let sampleBuffer = queue?.dequeue(renderer.presentationTimeStamp),
+        let presentationTimeStamp = renderer.presentationTimeStamp.convertTime(from: CMClockGetHostTimeClock(), to: renderer.synchronizationClock)
+        guard let sampleBuffer = queue?.dequeue(presentationTimeStamp),
               let pixelBuffer = sampleBuffer.imageBuffer else {
             return nil
         }

@@ -306,13 +306,31 @@ public final actor MediaMixer {
     /// Internally, it is called either when the view is attached or just before publishing. In other cases, please call this method if you want to manually start the capture.
     @available(tvOS 17.0, *)
     public func startCapturing() {
+        guard !session.isRunning else {
+            return
+        }
         session.startRunning()
+        let synchronizationClock = session.synchronizationClock
+        Task { @ScreenActor in
+            screen.synchronizationClock = synchronizationClock
+        }
+        Task {
+            for await runtimeError in session.runtimeError {
+                await sessionRuntimeErrorOccured(runtimeError)
+            }
+        }
     }
 
     /// Stops capturing from input devices.
     @available(tvOS 17.0, *)
     public func stopCapturing() {
+        guard session.isRunning else {
+            return
+        }
         session.stopRunning()
+        Task { @ScreenActor in
+            screen.synchronizationClock = nil
+        }
     }
 
     /// Appends an AVAudioBuffer.
@@ -428,14 +446,15 @@ extension MediaMixer: AsyncRunner {
             return
         }
         isRunning = true
+        setVideoRenderingMode(videoMixerSettings.mode)
+        startCapturing()
         Task {
             for await inputs in videoIO.inputs {
                 Task { @ScreenActor in
                     let sampleBuffer = inputs.1
                     screen.append(inputs.0, buffer: sampleBuffer)
-                    if await videoMixerSettings.mainTrack == inputs.0 && 0 < screen.targetTimestamp {
-                        let diff = ceil((screen.targetTimestamp - sampleBuffer.presentationTimeStamp.seconds) * 10000) / 10000
-                        screen.videoCaptureLatency = diff
+                    if await videoMixerSettings.mainTrack == inputs.0 {
+                        screen.setVideoCaptureLatency(sampleBuffer.presentationTimeStamp)
                     }
                 }
                 for output in outputs where await output.videoTrackId == inputs.0 {
@@ -457,15 +476,6 @@ extension MediaMixer: AsyncRunner {
                 }
             }
         }
-        if #available(tvOS 17.0, *) {
-            Task {
-                for await runtimeError in session.runtimeError {
-                    await sessionRuntimeErrorOccured(runtimeError)
-                }
-            }
-        }
-        setVideoRenderingMode(videoMixerSettings.mode)
-        session.startRunning()
         #if os(iOS) || os(tvOS) || os(visionOS)
         Task { @MainActor in
             NotificationCenter
@@ -493,7 +503,7 @@ extension MediaMixer: AsyncRunner {
             return
         }
         isRunning = false
-        session.stopRunning()
+        stopCapturing()
         audioIO.finish()
         videoIO.finish()
         Task { @MainActor in

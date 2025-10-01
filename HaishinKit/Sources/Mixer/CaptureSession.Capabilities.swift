@@ -11,6 +11,14 @@ extension CaptureSession {
             }
         }
 
+        func synchronizationClock(_ session: AVCaptureSession) -> CMClock? {
+            if #available(macOS 12.3, *) {
+                return session.synchronizationClock
+            } else {
+                return session.masterClock
+            }
+        }
+
         func makeSession(_ sessionPreset: AVCaptureSession.Preset) -> AVCaptureSession {
             let session = AVCaptureSession()
             if session.canSetSessionPreset(sessionPreset) {
@@ -42,6 +50,16 @@ extension CaptureSession {
             }
         }
 
+        #if os(iOS)
+        func synchronizationClock(_ session: AVCaptureSession) -> CMClock? {
+            if #available(iOS 15.4, *) {
+                return session.synchronizationClock
+            } else {
+                return session.masterClock
+            }
+        }
+        #endif
+
         @available(tvOS 17.0, *)
         func isMultitaskingCameraAccessEnabled(_ session: AVCaptureSession) -> Bool {
             session.isMultitaskingCameraAccessEnabled
@@ -72,6 +90,10 @@ extension CaptureSession {
             didSet {
                 isMultiCamSessionEnabled = false
             }
+        }
+
+        func synchronizationClock(_ session: AVCaptureSession) -> CMClock? {
+            return session.synchronizationClock
         }
 
         func isMultitaskingCameraAccessEnabled(_ session: AVCaptureSession) -> Bool {
