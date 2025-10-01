@@ -29,7 +29,7 @@ final class CaptureSession {
             capabilities.isMultiCamSessionEnabled
         }
         set {
-            capabilities.isMultiCamSessionEnabled = isMultitaskingCameraAccessEnabled
+            capabilities.isMultiCamSessionEnabled = newValue
         }
     }
 
@@ -94,7 +94,7 @@ final class CaptureSession {
             capabilities.isMultiCamSessionEnabled
         }
         set {
-            capabilities.isMultiCamSessionEnabled = isMultitaskingCameraAccessEnabled
+            capabilities.isMultiCamSessionEnabled = newValue
         }
     }
 
