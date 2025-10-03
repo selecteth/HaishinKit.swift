@@ -18,9 +18,9 @@ let package = Package(
     platforms: [
         .iOS(.v15),
         .tvOS(.v15),
-        .visionOS(.v1),
-        .macOS(.v11),
-        .macCatalyst(.v14)
+        .macCatalyst(.v15),
+        .macOS(.v12),
+        .visionOS(.v1)
     ],
     products: [
         .library(name: "HaishinKit", targets: ["HaishinKit"]),

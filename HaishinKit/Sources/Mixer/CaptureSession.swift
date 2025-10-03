@@ -8,7 +8,9 @@ protocol CaptureSessionConvertible: Runner {
 
     var isInturreped: AsyncStream<Bool> { get }
     var runtimeError: AsyncStream<AVError> { get }
+    var synchronizationClock: CMClock? { get }
     var isMultiCamSessionEnabled: Bool { get set }
+
     @available(tvOS 17.0, *)
     var isMultitaskingCameraAccessEnabled: Bool { get }
 
@@ -17,7 +19,7 @@ protocol CaptureSessionConvertible: Runner {
     @available(tvOS 17.0, *)
     func detachCapture(_ capture: (any DeviceUnit)?)
     @available(tvOS 17.0, *)
-    func configuration(_ lambda: (_ session: AVCaptureSession) throws -> Void ) rethrows
+    func configuration(_ lambda: (_ session: AVCaptureSession) throws -> Void) rethrows
     @available(tvOS 17.0, *)
     func startRunningIfNeeded()
 }
@@ -49,6 +51,10 @@ final class CaptureSession {
         AsyncStream { continutation in
             runtimeErrorContinutation = continutation
         }
+    }
+
+    var synchronizationClock: CMClock? {
+        capabilities.synchronizationClock(session)
     }
 
     #if !os(visionOS)
@@ -117,6 +123,14 @@ final class CaptureSession {
     var runtimeError: AsyncStream<AVError> {
         AsyncStream { continutation in
             runtimeErrorContinutation = continutation
+        }
+    }
+
+    var synchronizationClock: CMClock? {
+        if #available(tvOS 17.0, *) {
+            return session.synchronizationClock
+        } else {
+            return nil
         }
     }
 
@@ -328,6 +342,7 @@ final class NullCaptureSession: CaptureSessionConvertible {
 
     var isMultiCamSessionEnabled = false
     let isMultitaskingCameraAccessEnabled = false
+    let synchronizationClock: CMClock? = nil
 
     @AsyncStreamed(false)
     var isInturreped: AsyncStream<Bool>
