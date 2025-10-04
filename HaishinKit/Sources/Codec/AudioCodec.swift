@@ -158,7 +158,7 @@ final class AudioCodec {
     private func makeAudioConverter() -> AVAudioConverter? {
         guard
             let inputFormat,
-            let outputFormat = settings.format.makeOutputAudioFormat(inputFormat, sampleRate: settings.sampleRate) else {
+            let outputFormat = settings.format.makeOutputAudioFormat(inputFormat, sampleRate: settings.sampleRate, channelMap: settings.channelMap) else {
             return nil
         }
         let converter = AVAudioConverter(from: inputFormat, to: outputFormat)
