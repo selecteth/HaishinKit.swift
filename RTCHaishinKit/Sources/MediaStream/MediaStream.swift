@@ -7,8 +7,8 @@ actor MediaStream {
         case unsupportedCodec
     }
 
-    static let supportedAudioCodecs: [AudioCodecSettings.Format] = [.aac, .opus]
-    static let supportedVideoCodecs: [VideoCodecSettings.Format] = VideoCodecSettings.Format.allCases
+    static let supportedAudioCodecs: [AudioCodecSettings.Format] = [.opus]
+    static let supportedVideoCodecs: [VideoCodecSettings.Format] = [.h264]
 
     let id: String = UUID().uuidString
     private var _tracks: [MediaStreamTrack] = []
@@ -22,7 +22,11 @@ actor MediaStream {
     private(set) var videoTrackId: UInt8? = UInt8.max
     private(set) var audioTrackId: UInt8? = UInt8.max
     package lazy var incoming = IncomingStream(self)
-    package lazy var outgoing = OutgoingStream()
+    package lazy var outgoing: OutgoingStream = {
+        var stream = OutgoingStream()
+        stream.audioSettings = .init(channelMap: [0, 0], format: .opus)
+        return stream
+    }()
     package var outputs: [any StreamOutput] = []
     package var readyState: StreamReadyState = .idle
     package var bitRateStrategy: (any StreamBitRateStrategy)?

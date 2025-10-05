@@ -44,7 +44,6 @@ actor HTTPSession: Session {
         peerConnection = makePeerConnection()
         switch mode {
         case .publish:
-            try await _stream.setAudioSettings(.init(format: .opus))
             await _stream.tracks.forEach { track in
                 peerConnection.addTrack(track)
             }
