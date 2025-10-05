@@ -233,6 +233,10 @@ public struct AudioCodecSettings: Codable, Sendable {
         }
     }
 
+    func invalidateConverter(_ rhs: AudioCodecSettings) -> Bool {
+        return !(format == rhs.format && channelMap == rhs.channelMap)
+    }
+
     private func validatedChannelMap(_ converter: AVAudioConverter) -> [NSNumber]? {
         guard let channelMap, channelMap.count == converter.outputFormat.channelCount else {
             return nil

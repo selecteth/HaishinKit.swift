@@ -36,7 +36,7 @@ actor MediaStreamTrack {
         self.name = Self.generateCName()
         self.msid = streamId
         self.trackId = id
-        self.profile = nil
+        self.profile = "minptime=10;useinbandfec=1;stereo=1;sprop-stereo=1"
     }
 
     init(mid: String, streamId: String, videoCodecSettings: VideoCodecSettings) {
