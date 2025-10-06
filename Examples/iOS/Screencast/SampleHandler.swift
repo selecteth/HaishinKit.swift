@@ -11,27 +11,6 @@ nonisolated let logger = LBLogger.with("com.haishinkit.Screencast")
 @available(iOS 10.0, *)
 final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
     private var slider: UISlider?
-
-    private var _rotator: Any?
-    @available(iOS 16.0, tvOS 16.0, macOS 13.0, *)
-    private var rotator: VideoRotator? {
-        get {
-            _rotator as? VideoRotator
-        }
-        set {
-            _rotator = newValue
-        }
-    }
-
-    private var isVideoRotationEnabled = false {
-        didSet {
-            if isVideoRotationEnabled, #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
-                _rotator = VideoRotator()
-            } else {
-                _rotator = nil
-            }
-        }
-    }
     private var session: Session?
     private var mixer = MediaMixer(captureSessionMode: .manual, multiTrackAudioMixingEnabled: true)
     private var needVideoConfiguration = true
@@ -53,7 +32,6 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
          */
         LBLogger.with(kHaishinKitIdentifier).level = .info
         // mixer.audioMixerSettings.tracks[1] = .default
-        isVideoRotationEnabled = false
         Task {
             do {
                 session = try await SessionBuilderFactory.shared.make(Preference.default.makeURL()).build()
@@ -98,16 +76,7 @@ final class SampleHandler: RPBroadcastSampleHandler, @unchecked Sendable {
                     needVideoConfiguration = false
                 }
             }
-            if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *), let rotator {
-                switch rotator.rotate(buffer: sampleBuffer) {
-                case .success(let rotatedBuffer):
-                    Task { await mixer.append(rotatedBuffer) }
-                case .failure(let error):
-                    logger.error(error)
-                }
-            } else {
-                Task { await mixer.append(sampleBuffer) }
-            }
+            Task { await mixer.append(sampleBuffer) }
         case .audioMic:
             if sampleBuffer.dataReadiness == .ready {
                 Task { await mixer.append(sampleBuffer, track: 0) }
